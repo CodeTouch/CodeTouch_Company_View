@@ -1,22 +1,26 @@
 <script>
 import axios from 'axios';
 import findID from '@/components/content/modal/findID.vue';
+import findPW from '@/components/content/modal/findPW.vue';
 
 const { IMP } = window;  
 
 export default {
     components: {
         findID,
+        findPW,
     },
     data() {
         return {
             activeTab: '아이디 찾기', // 현재 활성화된 탭
             imp_uid:'',
             findUserId: null,
+            email: null,
+            viewPWModal: false,
         };
     },
     computed:{
-        viewModal(){
+        viewIDModal(){
             if (this.findUserId){
                 return true;
             }else{
@@ -25,16 +29,19 @@ export default {
         }
     },
     methods: {
+        disableFindModal(){
+            this.email = this.findUserId;
+            this.findUserId = null;
+            this.activeTab = '비밀번호 찾기';
+        },
         switchTab(tabName) {
             this.activeTab = tabName; // 탭 전환
         },
-        certification(){
+        findId(){
         IMP.certification(
             {},
             (rep) => {
               if(rep.success){
-                console.log(rep);
-                console.log("성공!");
                 this.imp_uid= rep.imp_uid;
 
                 // 서버에서 해당 유저 id 찾아주기
@@ -42,8 +49,38 @@ export default {
                     { withCredentials: true }
                 )
                 .then(response => {
-                  console.log(response.data);
                   this.findUserId = response.data.email;
+                })
+                .catch(error => {
+                  console.error(error);
+                });
+                }
+                    else{
+                        alert("실패!!" + rep.error_msg);
+                    }
+                }
+            )
+        },
+        findPw(){
+        IMP.certification(
+            {},
+            (rep) => {
+              if(rep.success){
+                this.imp_uid= rep.imp_uid;
+                console.log(this.email);
+
+                // 서버에서 해당 유저 id 찾아주기
+                axios.get(`http://192.168.5.10:8888/회사/회원/비번찾기/${this.email}/${this.imp_uid}`,
+                    { withCredentials: true }
+                )
+                .then(response => {
+                  if (response.status == 200){
+                    this.findUserId = this.email;
+                    this.viewPWModal = true;
+                  }else if(response.status == 400){
+                    
+                  }
+                
                 })
                 .catch(error => {
                   console.error(error);
@@ -67,8 +104,11 @@ export default {
 </script>
 
 <template>
-    <div class="modal-overlay" v-if="viewModal">
-        <findID :findId="findUserId"></findID>
+    <div class="modal-overlay" v-if="viewIDModal">
+        <findID :findId="findUserId" @findPW="disableFindModal"></findID>
+    </div>
+    <div class="modal-overlay" v-if="viewPWModal">
+        <findPW :findId="findUserId"></findPW>
     </div>
     <div class="container">
         <header class="header">
@@ -96,14 +136,14 @@ export default {
         <!-- 아이디 찾기 콘텐츠 -->
         <div class="content" v-show="activeTab === '아이디 찾기'">
             <p class="description">아이디를 찾으시려면<br>본인인증을 진행해 주세요</p>
-            <button class="button outline" @click="certification">본인인증</button>
+            <button class="button outline" @click="findId">본인인증</button>
         </div>
 
         <!-- 비밀번호 찾기 콘텐츠 -->
         <div class="content" v-show="activeTab === '비밀번호 찾기'">
             <p class="description">비밀번호를 찾고자하는<br>이메일을 입력해주세요</p>
-            <input type="email" class="input-field" placeholder="example@imweb.me">
-            <button class="button">비밀번호 찾기</button>
+            <input type="email" class="input-field" placeholder="example@imweb.me" v-model="email">
+            <button class="button" @click="findPw">비밀번호 찾기</button>
         </div>
     </div>
 </template>
