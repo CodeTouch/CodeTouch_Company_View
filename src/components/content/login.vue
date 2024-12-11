@@ -74,6 +74,9 @@ export default {
                             const bearerToken = token.split(' ')[1];  //Bearer 부분 제거 후 토큰만 저장
                             localStorage.setItem('AuthToken', bearerToken);
                             localStorage.setItem('UserEmail', this.email);
+                            const randomValue = Math.floor(Math.random() * 20) + 1;
+                            const imageName = `${randomValue}.png`;
+                            localStorage.setItem('image', imageName);
                             this.$router.push('/'); //메인 페이지로 이동
                         }
                     }
@@ -172,15 +175,6 @@ export default {
 </template>
 
 <style scoped>
-a {
-    text-decoration: none; 
-    color: inherit; 
-}
-
-a:visited {
-    color: inherit; 
-    text-decoration: none;
-}
 
 .G_btn_class {
     display: flex; 

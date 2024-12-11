@@ -5,6 +5,7 @@ export default {
     data(){
         return{
             viewModal: false,
+            imageSrc: '',
         }
     },
     components:{
@@ -18,6 +19,12 @@ export default {
             this.viewModal = true;
         }
     },
+    mounted(){
+        const storedImage = localStorage.getItem('image');
+        if (storedImage) {
+          this.imageSrc = `/images/${storedImage}`;
+        }
+    }
 
 }
 </script>
@@ -28,6 +35,7 @@ export default {
         <div class="container">
         <div class="profile">
             <div class="profile-image">
+                <img class="profile-image" :src="imageSrc">
                 <div class="profile-image-settings">⚙️</div>
             </div>
             <div class="profile-name">mysk423</div>

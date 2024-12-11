@@ -5,8 +5,9 @@ import introduce from "@/components/content/introduce.vue";
 import payment from "@/components/content/payment.vue";
 import login from "@/components/content/login.vue";
 import pay from "@/components/content/pay.vue";
-import findInfo from "@/components/content/findInfo.vue"
+import findInfo from "@/components/content/findInfo.vue";
 import mySite from "@/components/content/mySite.vue";
+import myPage from "@/components/content/myPage.vue";
 
 const routes = [
   {
@@ -55,6 +56,12 @@ const routes = [
     path: "/mySite",
     name: "mySite",
     component: mySite,
+    //meta: { requiresAuth: true, showSidebar: true },
+  },
+  {
+    path: "/myPage",
+    name: "myPage",
+    component: myPage,
     //meta: { requiresAuth: true, showSidebar: true },
   },
 ];
