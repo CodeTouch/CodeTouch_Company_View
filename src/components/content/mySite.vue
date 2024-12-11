@@ -1,4 +1,30 @@
+<script>
+import createSite from "@/components/content/modal/createSite.vue";
+
+export default {
+    data(){
+        return{
+            viewModal: false,
+        }
+    },
+    components:{
+        createSite,
+    },
+    methods:{
+        closeModal(){
+            this.viewModal = false;
+        },
+        openModal(){
+            this.viewModal = true;
+        }
+    },
+
+}
+</script>
 <template>
+    <div v-if="viewModal" class="modal-overlay">
+        <createSite @close="closeModal"></createSite>
+    </div>
         <div class="container">
         <div class="profile">
             <div class="profile-image">
@@ -39,10 +65,21 @@
             </div>
         </div>
 
-        <button class="create-site-button">무료 사이트 개설</button>
+        <button class="create-site-button" @click="openModal">무료 사이트 개설</button>
     </div>
 </template>
 <style scoped>
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
         * {
             margin: 0;
             padding: 0;
@@ -193,6 +230,7 @@
         }
 
         .status-button {
+            width: 130px;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 13px;

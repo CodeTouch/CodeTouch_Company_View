@@ -73,6 +73,7 @@ export default {
                         if(token){
                             const bearerToken = token.split(' ')[1];  //Bearer 부분 제거 후 토큰만 저장
                             localStorage.setItem('AuthToken', bearerToken);
+                            localStorage.setItem('UserEmail', this.email);
                             this.$router.push('/'); //메인 페이지로 이동
                         }
                     }
