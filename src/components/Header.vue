@@ -36,14 +36,15 @@ export default{
         <div class="auth-buttons">
 
           <div class="login-container" v-if="!showlogin">
-            <div class="login-text">내 사이트</div>
+            <router-link to="/mySite">
+              <div class="login-text">내 사이트</div>
+            </router-link>
             <div class="login-circle"></div>
           </div>
           <router-link to="/login" v-if="showlogin">
             <button class="btn btn-outline">로그인</button>
           </router-link>
           </div>
-        
       </div>
     </nav>
   </header>

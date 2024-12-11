@@ -7,7 +7,11 @@ export default {
     },
     props:{
         findId: String,
-        createAt: String,
+    },
+    methods:{
+        sendToParent(){
+            this.$emit('findPW');
+        }
     }
 }
 </script>
@@ -29,8 +33,10 @@ export default {
         </div>
 
         <div class="button-group">
-            <button class="button outline">비밀번호 찾기</button>
-            <button class="button primary">로그인 하기</button>
+            <button class="button outline" @click="sendToParent">비밀번호 찾기</button>
+            <router-link to="/login">
+                <button class="button primary">로그인 하기</button>
+            </router-link>
         </div>
     </div>
 </template>
