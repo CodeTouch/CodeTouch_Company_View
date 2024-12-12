@@ -1,119 +1,143 @@
 <script>
-const { IMP } = window;                                 // 아임포트
+const { IMP } = window;         
+import { initializeIMP, requestPayment } from "@/JavaScript/payment.js";
+import axios from 'axios';                        // 아임포트
 
 export default {
   name: "test",
   data(){
     return{
-      price: 1
+        selectedPeriod: '1',
+        defaultPrice: 20000,
+        siteList: [],
     }
   },
     mounted() {
-        if(IMP){
-            IMP.init("imp22383085");                    // 결제 대행사에서 발급받은 아이디
-        }else{
-            console.log("SDK 로드 안됨.");
-        }
+        initializeIMP();
+
+        console.log(localStorage.getItem('UserEmail'));
+        //내 사이트 끌어오기
+        axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${localStorage.getItem('UserEmail')}`,
+         { withCredentials: true })
+        .then(response => {
+         console.log(response.data.siteList);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    computed:{
+        price() {
+            if (this.selectedPeriod === "12") {
+                // 12개월 선택 시 할인 적용
+                const discountedPrice = 14000 * 12; // 12개월 동안 할인된 가격
+                return discountedPrice.toLocaleString();
+            } else {
+                // 1개월 선택 시 기본 가격
+                const totalPrice = this.defaultPrice * this.selectedPeriod;
+                return totalPrice.toLocaleString();
+            }
+        },
+        discount() {
+            if (this.selectedPeriod === "12") {
+                const originalPrice = this.defaultPrice * 12; // 원래 12개월 가격
+                const discountedPrice = 14000 * 12; // 할인된 12개월 가격
+                return (originalPrice - discountedPrice).toLocaleString(); // 할인된 금액
+            }
+            return "0"; // 할인 없음
+        },
+        nextPaymentDate() {
+            const today = new Date();
+            const nextDate = new Date(today); // 새로운 Date 객체 생성
+        
+            if (this.selectedPeriod === "1") {
+                nextDate.setMonth(nextDate.getMonth() + 1); // 1개월 뒤
+            } else if (this.selectedPeriod === "12") {
+                nextDate.setMonth(nextDate.getMonth() + 12); // 12개월 뒤
+            }
+            
+            return nextDate.toISOString().split("T")[0]; // yyyy-MM-dd 형식으로 반환
+        },
     },
   methods: {
     onPayment:function(){
-        if(!IMP){
-            console.log("SDK 로드 안됨.");
-        }
-
-      IMP.request_pay({                                 // param
-        pg: "html5_inicis",                             // PG(Payment Gateway)
-        pay_method: "card",                             // 결제 수단
-        merchant_uid: `ORD-${new Date().getTime()}`,    // 주문명(이게 주문 코드)
-        name: "pd1",                                    // 상품명
-        amount: this.price,                             // 상품 가격
-        buyer_email: "test@naver.com",                  // 구매자 이메일
-        buyer_name: "테스터",                           // 구매자 이름
-        buyer_tel: "010-1234-5678",                     // 구매자 번호
-        buyer_addr: "서울특별시",                       // 구매자 주소
-        buyer_postcode: "07222"                         // 구매자 우편번호
-      }, rsp => { // callback                           // 모두 필요한것은 아닌것으로 보임
-        console.log(rsp);
-        if (rsp.success) {
-          console.log("결제 성공");
-        } else {
-          console.log("결제 실패");
-        }
-      });
-
+        requestPayment({
+            name: "site_id",                                //결제 상품 이름
+            amount: this.selectedPeriod === "12" ? 14000 * 12 : this.defaultPrice * this.selectedPeriod, // 상품 가격
+            buyerEmail: localStorage.getItem("userEmail"), // 구매자 이메일
+            buyerName: "테스터",                            // 구매자 이름
+            buyerTel: "010-1234-5678",                      // 구매자 전화번호
+            onSuccess: (response) => {                      // 성공 이후 메서드
+                console.log("결제 성공", response);
+                // 성공 시 처리 로직 추가
+            },
+            onFailure: (response) => {                      // 실패 이후 메서드
+                console.error("결제 실패", response);
+                // 실패 시 처리 로직 추가
+            },
+        })
     }
   }
 }
 </script>
 
 <template>
-    <div class="container">
-        <div class="left-column">
-            <div class="payment-section">
-                <h2>서비스 선택</h2>
-                <div class="select-wrapper">
-                    <select>
-                        <option>my1st23500.invites.me (Free)</option>
-                    </select>
-                </div>
-
-                <h2>서비스 기간</h2>
-                <div class="radio-group">
-                    <label class="radio-item">
-                        <input type="radio" name="period" value="1">
-                        <span>1개월</span>
-                        <span class="price">20,000원/월</span>
-                    </label>
-                    <label class="radio-item">
-                        <input type="radio" name="period" value="3">
-                        <span>3개월</span>
-                        <span class="price">18,000원/월</span>
-                        <span class="discount">10%할인</span>
-                    </label>
-                    <label class="radio-item">
-                        <input type="radio" name="period" value="6">
-                        <span>6개월</span>
-                        <span class="price">16,000원/월</span>
-                        <span class="discount">20%할인</span>
-                    </label>
-                    <label class="radio-item">
-                        <input type="radio" name="period" value="12">
-                        <span>12개월</span>
-                        <span class="price">14,000원/월</span>
-                        <span class="discount">30%할인</span>
-                    </label>
-                </div>
-            </div>
+  <div class="container">
+    <div class="left-column">
+      <div class="payment-section">
+        <h2>서비스 선택</h2>
+        <div class="select-wrapper">
+          <select>
+            <option>my1st23500.invites.me (Free)</option>
+          </select>
         </div>
 
-        <div class="payment-details">
-            <h2>결제상세</h2>
-            <div class="details-row">
-                <span>정기결제 금액</span>
-                <span>240,000원</span>
-            </div>
-            <div class="details-row">
-                <span>부가서비스 금액</span>
-                <span>0원</span>
-            </div>
-            <div class="details-row">
-                <span>할인 금액</span>
-                <span class="discount">-28,800원</span>
-            </div>
-            <div class="total-price">
-                <span>총 결제금액</span>
-                <span>211,200원</span>
-            </div>
-            <div class="details-row">
-                <span>다음 결제일</span>
-                <span>2025-12-05</span>
-            </div>
-            <button class="payment-button" @click="onPayment">결제하기</button>
-            <p class="info-text">
-                • 결제일은 구독 시작일 기준으로 선택한 서비스, 사용 기간에 맞춰 자동 구독결제 됩니다.
-            </p>
+        <h2>서비스 기간</h2>
+        <div class="radio-group">
+          <label class="radio-item">
+            <input type="radio" name="period" value="1" v-model="selectedPeriod" />
+            <span>1개월</span>
+            <span class="price">20,000원/월</span>
+          </label>
+
+          <label class="radio-item">
+            <input type="radio" name="period" value="12" v-model="selectedPeriod" />
+            <span>12개월</span>
+            <span class="price">14,000원/월</span>
+            <span class="discount">30% 할인</span>
+          </label>
         </div>
+      </div>
     </div>
+
+    <div class="payment-details">
+      <h2>결제상세</h2>
+      <div class="details-row">
+        <span>결제 금액</span>
+        <span>{{ price }}원</span>
+      </div>
+      <div class="details-row">
+        <span>부가서비스 금액</span>
+        <span>0원</span>
+      </div>
+      <div class="details-row">
+        <span>할인 금액</span>
+        <span class="discount">-{{ discount }}원</span>
+      </div>
+      <div class="total-price">
+        <span>총 결제금액</span>
+        <span>{{ price }}원</span>
+      </div>
+      <div class="details-row">
+        <span>다음 결제일</span>
+        <span>{{ nextPaymentDate }}</span>
+      </div>
+      <button class="payment-button" @click="onPayment">결제하기</button>
+      <p class="info-text">
+        • 결제일 기준으로 결제기간 이후 재 결재하셔야 합니다.
+      </p>
+    </div>
+  </div>
 </template>
 
 <style scoped>
