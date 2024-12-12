@@ -44,6 +44,7 @@ const routes = [
     path: "/pay",
     name: "pay",
     component: pay,
+    props: true,
     //meta: { requiresAuth: true, showSidebar: true },
   },
   {

@@ -1,139 +1,176 @@
-<script>
-
-</script>
-
 <template>
     <div class="container">
-        <h1 class="page-title">마이페이지</h1>
-
-        <nav class="nav">
-            <a href="#" class="nav-item active">정보수정</a>
-            <a href="#" class="nav-item">결제내역</a>
-            <a href="#" class="nav-item">문의내역</a>
-            <a href="#" class="nav-item">수강내역</a>
-        </nav>
-
+        <!-- 정보수정 섹션 -->
         <div class="section">
-            <h2 class="section-title">결제 비밀번호 관리</h2>
-            <div class="button-group">
-                <button class="button">변경하기</button>
-                <button class="button">재설정하기</button>
+            <div class="section-header">
+                <h2>정보수정</h2>
+                <button class="nav-button">수정하기</button>
+            </div>
+            <div class="profile-section">
+                <div class="profile-header">
+                    <div class="profile-circle">
+                        <span>p.f</span>
+                    </div>
+                    <div class="profile-info-inline">
+                        <div class="nickname">닉네임</div>
+                        <div class="email">email@example.com</div>
+                    </div>
+                </div>
+                <div class="homepage left-align">
+                    이름<br />
+                    전화번호<br />
+                    홈페이지 주소
+                </div>
             </div>
         </div>
 
+        <!-- 결제내역 섹션 -->
         <div class="section">
-            <h2 class="section-title">결제수단 관리</h2>
-            <div class="card">
-                <p class="card-text">등록된 결제수단이 없습니다.</p>
-                <button class="button-primary">+ 카드 등록하기</button>
+            <div class="section-header">
+                <h2>결제 내역</h2>
+                <button class="nav-button">더보기</button>
+            </div>
+            <div class="notification-section">
+                <div class="notification-item">
+                    <span>사이트 노내일</span>
+                    <button class="confirm-button">확인중</button>
+                </div>
+                <div class="notification-item">요금제가 곧 만료됩니다.</div>
+                <div class="notification-item">결제수단 정보가 필요합니다.</div>
             </div>
         </div>
     </div>
 </template>
+
 <style scoped>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f5f6f8;
-            color: #333;
-        }
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
+/* 공통 섹션 스타일 */
+.section {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    padding: 24px;
+}
 
-        .page-title {
-            font-size: 24px;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 40px;
-        }
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
 
-        /* 네비게이션 */
-        .nav {
-            display: flex;
-            justify-content: center;
-            gap: 32px;
-            margin-bottom: 48px;
-        }
+.section-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
 
-        .nav-item {
-            font-size: 15px;
-            color: #666;
-            text-decoration: none;
-            padding-bottom: 8px;
-        }
+.nav-button {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background-color: white;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+}
 
-        .nav-item.active {
-            color: #0066ff;
-            border-bottom: 2px solid #0066ff;
-        }
+/* 프로필 섹션 */
+.profile-section {
+    display: flex;
+    flex-direction: column;
+}
 
-        /* 섹션 스타일 */
-        .section {
-            margin-bottom: 32px;
-        }
+.profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
 
-        .section-title {
-            font-size: 15px;
-            font-weight: 500;
-            margin-bottom: 16px;
-        }
+.profile-circle {
+    width: 60px;
+    height: 60px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+}
 
-        /* 버튼 그룹 */
-        .button-group {
-            display: flex;
-            gap: 8px;
-        }
+.profile-circle span {
+    font-size: 20px;
+    color: #666;
+}
 
-        .button {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ddd;
-            background-color: white;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #333;
-            cursor: pointer;
-        }
+.profile-info-inline {
+    display: flex;
+    flex-direction: column;
+}
 
-        .button:hover {
-            background-color: #f8f8f8;
-        }
+.nickname {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
 
-        /* 카드 스타일 */
-        .card {
-            background-color: white;
-            border-radius: 4px;
-            padding: 32px;
-            text-align: center;
-        }
+.email {
+    font-size: 14px;
+    color: #666;
+}
 
-        .card-text {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 16px;
-        }
+.homepage {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+}
 
-        .button-primary {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #0066ff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            cursor: pointer;
-        }
+.homepage.left-align {
+    text-align: left;
+}
 
-        .button-primary:hover {
-            background-color: #0052cc;
-        }
+/* 알림 섹션 */
+.notification-section {
+    padding: 24px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.notification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.confirm-button {
+    padding: 4px 12px;
+    background-color: #f5f5f5;
+    border: none;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #666;
+}
 </style>

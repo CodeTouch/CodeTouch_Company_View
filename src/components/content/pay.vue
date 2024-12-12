@@ -1,30 +1,23 @@
 <script>
-const { IMP } = window;         
+const { IMP } = window;
+import axios from "axios";
 import { initializeIMP, requestPayment } from "@/JavaScript/payment.js";
-import axios from 'axios';                        // 아임포트
 
 export default {
-  name: "test",
   data(){
     return{
         selectedPeriod: '1',
-        defaultPrice: 20000,
+        defaultPrice: 1,
         siteList: [],
+        selectedSite: [],
     }
   },
     mounted() {
         initializeIMP();
+        const getList = localStorage.getItem('siteList');
+        this.siteList = JSON.parse(getList);
 
-        console.log(localStorage.getItem('UserEmail'));
-        //내 사이트 끌어오기
-        axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${localStorage.getItem('UserEmail')}`,
-         { withCredentials: true })
-        .then(response => {
-         console.log(response.data.siteList);
-        })
-        .catch(error => {
-          console.error(error);
-        });
+        localStorage.removeItem('siteList');
     },
     computed:{
         price() {
@@ -70,6 +63,23 @@ export default {
             onSuccess: (response) => {                      // 성공 이후 메서드
                 console.log("결제 성공", response);
                 // 성공 시 처리 로직 추가
+
+                const param = {
+                    email: localStorage.getItem("UserEmail"),
+                    siteId: this.selectedSite.siteId,
+                    expiry: this.nextPaymentDate,
+                }
+
+                axios.post(`http://192.168.5.10:8888/회사/회원/결제내역저장`, param,
+                { withCredentials: true,
+                //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
+                })
+                .then(response => {
+                    this.$router.push("/mySite");
+                })
+                .catch(error => {
+                });
+
             },
             onFailure: (response) => {                      // 실패 이후 메서드
                 console.error("결제 실패", response);
@@ -87,8 +97,10 @@ export default {
       <div class="payment-section">
         <h2>서비스 선택</h2>
         <div class="select-wrapper">
-          <select>
-            <option>my1st23500.invites.me (Free)</option>
+          <select v-model="selectedSite">
+            <option v-for="(site, index) in siteList" :key="index" :value="site">
+              {{ site.siteName }} 
+            </option>
           </select>
         </div>
 
