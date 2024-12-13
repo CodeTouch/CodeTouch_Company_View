@@ -49,8 +49,10 @@ export default {
     <div class="container">
         <div class="profile">
             <div class="profile-image">
+            <router-link to="/myPage">
                 <img class="profile-image" :src="imageSrc" alt="프로필 이미지">
                 <div class="profile-image-settings">⚙️</div>
+            </router-link>
             </div>
             <div class="profile-name">mysk423</div>
         </div>

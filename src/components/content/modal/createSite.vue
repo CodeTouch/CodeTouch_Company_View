@@ -38,7 +38,7 @@ export default {
                         placeholder="URL"
                         ref="inputSiteDomain"
                     >
-                    <span class="domain-suffix">.imweb.me</span>
+                    <span class="domain-suffix">.코드터치.한글</span>
                 </div>
                 <button type="button" class="clear-button" @click="clearSiteDomain">×</button>
             </div>

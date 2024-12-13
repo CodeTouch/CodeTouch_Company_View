@@ -1,3 +1,19 @@
+<script>
+export default{
+    data(){
+        return{
+            imgSrc: '',
+        }
+    },
+    mounted(){
+        const storedImage = localStorage.getItem('image');
+            if (storedImage) {
+                this.imgSrc = `/images/${storedImage}`;
+            }
+    }
+}
+</script>
+
 <template>
     <div class="container">
         <!-- 정보수정 섹션 -->
@@ -9,7 +25,7 @@
             <div class="profile-section">
                 <div class="profile-header">
                     <div class="profile-circle">
-                        <span>p.f</span>
+                        <img :src="imgSrc" width="60px" height="60px">
                     </div>
                     <div class="profile-info-inline">
                         <div class="nickname">닉네임</div>
