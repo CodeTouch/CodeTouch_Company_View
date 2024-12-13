@@ -1,4 +1,6 @@
 <script>
+import axios from 'axios';
+
 export default {
     props:{
         templateId: Number,
@@ -12,6 +14,23 @@ export default {
         },
         emitClose() {
             this.$emit('close');
+        },
+        createSite(){
+            const param = {
+                email: localStorage.getItem('email'),
+                siteName: this.$refs.inputSiteName.value,
+            }
+
+            axios.post(`http://192.168.5.10:8888/고객/회원/사이트생성`, param,
+                { withCredentials: true })
+                .then(response => {
+                    if (response == 200){
+                        console.log("성공!!");
+                    }
+                })
+                .catch(error => {
+                    console.log("실패!!");
+                });
         }
     }
 };
@@ -22,7 +41,7 @@ export default {
         <button class="close-button" @click="emitClose">×</button>
         <h1 class="title">새로운 웹사이트</h1>
         
-        <form>
+        <form @submit.prevent="createSite">
             <div class="input-group">
                 <input 
                     type="text" 
@@ -71,7 +90,7 @@ export default {
         }
 
         .container {
-            width: 100%;
+            width: 600px;
             max-width: 400px;
             padding: 20px;
             text-align: center;

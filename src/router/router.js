@@ -9,6 +9,7 @@ import findInfo from "@/components/content/findInfo.vue";
 import mySite from "@/components/content/mySite.vue";
 import myPage from "@/components/content/myPage.vue";
 import template from "@/components/content/templatePage.vue";
+import editPage from "@/components/content/editPage.vue"
 
 const routes = [
   {
@@ -70,6 +71,12 @@ const routes = [
     path: "/template",
     name: "template",
     component: template,
+    //meta: { requiresAuth: true, showSidebar: true },
+  },
+  {
+    path: "/editPage",
+    name: "editPage",
+    component: editPage,
     //meta: { requiresAuth: true, showSidebar: true },
   },
 ];

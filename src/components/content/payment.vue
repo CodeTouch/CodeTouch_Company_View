@@ -40,20 +40,12 @@ export default{
             this.modal.classList.remove("active");
         },
         moveToPage(){
-            this.$router.push("/");
+            this.$router.push("/template");
         }
     }
 }
 </script>
 <template>
-    <div class="modal-overlay" id="customModal">
-        <div class="modal">
-            <h2>생성된 사이트가 없습니다. 생성하시겠습니까?</h2>
-            <button class="cancel-button" @click="closeModal()">취소</button>
-            <button class="move-button" @click="moveToPage()">이동하기</button>
-        </div>
-    </div>
-
     <div class="container">
         <h1>요금제 비교</h1>
         <div class="pricing-plans">
@@ -65,6 +57,8 @@ export default{
                     <li>1GB 저장 공간</li>
                     <li>이메일 지원</li>
                     <li>광고 포함</li>
+                    <li class="unavailable">고급 분석 도구</li>
+                    <li class="unavailable">맞춤형 보고서</li>
                 </ul>
                 <div class="plan-footer">
                     <button>무료로 시작하기</button>
@@ -76,7 +70,7 @@ export default{
                 <ul>
                     <li>모든 기능 사용 가능</li>
                     <li>무제한 저장 공간</li>
-                    <li>24/7 고객 지원</li>
+                    <li>실시간 고객 지원</li>
                     <li>광고 없음</li>
                     <li>고급 분석 도구</li>
                     <li>맞춤형 보고서</li>
@@ -89,6 +83,17 @@ export default{
     </div>
 </template>
 <style scoped>
+/* 붉은색 X 아이콘 스타일 */
+li.unavailable {
+    position: relative;
+    color: #ff4d4f;
+}
+
+/* 붉은색 X 아이콘 */
+li.unavailable::before {
+    content: "✘";
+    color: #ff4d4f;
+}
         /* 모달의 배경 */
         .modal-overlay {
             position: fixed;
@@ -199,16 +204,17 @@ ul {
 }
 
 li {
-    margin-bottom: 10px;
-    padding-left: 20px;
     position: relative;
+    padding-left: 20px; /* 아이콘 위치 조정 */
 }
 
+/* 체크 아이콘 */
 li::before {
     content: "✓";
     color: #4CAF50;
     position: absolute;
-    left: 0;
+    left: 0; /* 아이콘 위치 */
+    font-size: 14px;
 }
 
 .plan-footer {

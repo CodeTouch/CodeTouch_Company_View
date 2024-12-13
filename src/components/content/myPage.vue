@@ -20,7 +20,9 @@ export default{
         <div class="section">
             <div class="section-header">
                 <h2>정보수정</h2>
-                <button class="nav-button">수정하기</button>
+                <router-link to="/editPage">
+                    <button class="nav-button">수정하기</button>
+                </router-link>
             </div>
             <div class="profile-section">
                 <div class="profile-header">
@@ -44,7 +46,7 @@ export default{
         <div class="section">
             <div class="section-header">
                 <h2>결제 내역</h2>
-                <button class="nav-button">더보기</button>
+                    <button class="nav-button">더보기</button>
             </div>
             <div class="notification-section">
                 <div class="notification-item">

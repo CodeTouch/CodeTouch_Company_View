@@ -1,5 +1,4 @@
 <script>
-import createSite from "@/components/content/modal/createSite.vue";
 import SiteRow from "./child/siteElement.vue";
 import axios from "axios";
 
@@ -12,16 +11,10 @@ export default {
         }
     },
     components:{
-        createSite,
         SiteRow,
     },
     methods:{
-        closeModal(){
-            this.viewModal = false;
-        },
-        openModal(){
-            this.viewModal = true;
-        }
+
     },
     mounted(){
         const storedImage = localStorage.getItem('image');
@@ -43,9 +36,6 @@ export default {
 }
 </script>
 <template>
-    <div v-if="viewModal" class="modal-overlay">
-        <createSite @close="closeModal"></createSite>
-    </div>
     <div class="container">
         <div class="profile">
             <div class="profile-image">
@@ -73,7 +63,9 @@ export default {
                 </tr>
             </tbody>
         </table>
-        <button class="create-site-button" @click="openModal">무료 사이트 개설</button>
+        <router-link to="/template">
+            <button class="create-site-button">무료 사이트 개설</button>
+        </router-link>
     </div>
 </template>
 
