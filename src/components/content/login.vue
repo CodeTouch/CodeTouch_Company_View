@@ -1,6 +1,7 @@
 <script>
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import { useUserStore } from '@/Store/userLoginStore';
 
 const secretKey = 'codetouchPWhashKey'; // 대칭키
 
@@ -15,6 +16,11 @@ export default {
             googleUser: {},
             remember: false,
         };
+    },
+    computed:{
+        userStore(){
+            return useUserStore();
+        }
     },
     mounted(){
         this.googleInit();
@@ -74,6 +80,7 @@ export default {
                             const bearerToken = token.split(' ')[1];  //Bearer 부분 제거 후 토큰만 저장
                             localStorage.setItem('AuthToken', bearerToken);
                             localStorage.setItem('UserEmail', this.email);
+//                            userStore.setUserData(this.email, );
                             const randomValue = Math.floor(Math.random() * 20) + 1;
                             const imageName = `${randomValue}.png`;
                             localStorage.setItem('image', imageName);

@@ -61,7 +61,7 @@ export default{
         </a>
         <ul class="nav-menu">
           <li><router-link to="/introduce">기능소개</router-link></li>
-          <li><a href="/pricing">템플릿</a></li>
+          <li><router-link to="/template">템플릿</router-link></li>
           <li><router-link to="/payment">요금</router-link></li>
           <li><a href="/partner">팀원소개</a></li>
         </ul>

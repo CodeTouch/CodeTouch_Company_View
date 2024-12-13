@@ -24,7 +24,7 @@
                     <div class="divider"></div>
                     <div class="menu-item">템플릿 변경</div>
                     <div class="divider"></div>
-                    <div class="menu-item danger">사이트 삭제</div>
+                    <div class="menu-item danger" @click="deleteSite">사이트 삭제</div>
                 </div>
             </div>
         </div>
@@ -33,6 +33,9 @@
 
 
 <script>
+import { useUserStore } from '@/Store/userLoginStore';
+import axios from 'axios';
+
 export default {
     name: "SiteRow",
     props: {
@@ -46,9 +49,28 @@ export default {
             showDropdown: false, // 드롭다운 메뉴 상태
         };
     },
+    computed:{
+      userStore(){
+        return useUserStore();
+      }
+    },
     methods: {
         toggleDropdown() {
             this.showDropdown = !this.showDropdown; // 드롭다운 토글
+        },
+        deleteSite(){
+          //const userEmail = this.userStore.userEmail;
+          const userEmail = localStorage.getItem('email')
+          console.log(userEmail);
+          console.log(this.site.siteId);
+
+          axios.delete(`http://192.168.5.10:8888/고객/회원/사이트삭제/${userEmail}/${this.site.siteId}`,
+                    { withCredentials: true }
+                )
+                .then(response => {
+                })
+                .catch(error => {
+                });
         }
     }
 };

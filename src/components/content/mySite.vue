@@ -29,7 +29,7 @@ export default {
           this.imageSrc = `/images/${storedImage}`;
         }
 
-        axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${localStorage.getItem('UserEmail')}`,
+        axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${localStorage.getItem('email')}`,
             { withCredentials: true,
             //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
             })

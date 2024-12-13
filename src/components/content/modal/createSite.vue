@@ -1,5 +1,8 @@
 <script>
 export default {
+    props:{
+        templateId: Number,
+    },
     methods: {
         clearSiteName() {
             this.$refs.inputSiteName.value = "";
