@@ -14,6 +14,9 @@ export default{
         }
     },
     methods: {
+        closeBtn(){
+            this.$emit('close-modal');
+        },
         validatePassword(){
             const requestData = {
                 "email": localStorage.getItem('email'),
@@ -135,7 +138,7 @@ export default{
             </div>
 
             <div class="button-group">
-                <button type="button" class="button secondary">닫기</button>
+                <button type="button" class="button secondary" @click="closeBtn">닫기</button>
                 <button type="submit" class="button primary">비밀번호 변경</button>
             </div>
         </form>

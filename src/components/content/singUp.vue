@@ -1,6 +1,6 @@
 <script>
 import axios from 'axios';
-const { IMP } = window;       
+import { initializeIMP, certification } from "@/JavaScript/payment.js";    
 
 export default {
   data() {
@@ -35,11 +35,7 @@ export default {
     },
   },
   mounted() {
-    if(IMP){
-        IMP.init("imp22383085");                    // 결제 대행사에서 발급받은 아이디
-    }else{
-        console.log("SDK 로드 안됨.");
-    }
+    initializeIMP();
   },
   methods: {
     submitForm() {
@@ -111,10 +107,8 @@ export default {
           }
         },
         certification(){
-          IMP.certification(
-            {},
-            (rep) => {
-              if(rep.success){
+          certification({
+              onSuccess: (response) => {
                 this.verification = true;
                 this.imp_uid= rep.imp_uid;
 
@@ -129,9 +123,9 @@ export default {
                 .catch(error => {
                   console.error(error);
                 });
-              }
-              else{
-                console.log("테스트 3");
+              },
+              onFailure: (response) => {
+
               }
             }
           )

@@ -60,6 +60,7 @@ export default{
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000; /* 최상단으로 설정 */
 }
         * {
             margin: 0;

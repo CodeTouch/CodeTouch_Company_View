@@ -9,12 +9,12 @@ export const useUserStore = defineStore('login',() => {
     const userPhone = ref('');
 
 
-    function setUserData(email, img, name, nickname, phone){
-        userEmail.value = email;
-        userImgURL.value = img;
-        userName.value = name;
-        userNickname.value = nickname;
-        userPhone.value = phone;
+    function setUserData(data){
+        userEmail.value = data.email;
+        userImgURL.value = data.img;
+        userName.value = data.name;
+        userNickname.value = data.nickname;
+        userPhone.value = data.phone;
     }
 
     return { userEmail, userImgURL, setUserData}

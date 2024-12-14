@@ -1,5 +1,4 @@
 <script>
-const { IMP } = window;
 import axios from "axios";
 import { initializeIMP, requestPayment } from "@/JavaScript/payment.js";
 

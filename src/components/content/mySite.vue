@@ -51,8 +51,8 @@ export default {
             <thead>
                 <tr>
                     <td class="active">내사이트</td>
-                    <td>상태</td>
-                    <td>도구</td>
+                    <td class="active">상태</td>
+                    <td class="active">도구</td>
                 </tr>
             </thead>
             <tbody>
@@ -80,6 +80,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000; /* 최상단으로 설정 */
 }
         * {
             margin: 0;

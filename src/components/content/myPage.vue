@@ -27,7 +27,7 @@ export default{
             <div class="profile-section">
                 <div class="profile-header">
                     <div class="profile-circle">
-                        <img :src="imgSrc" width="60px" height="60px">
+                        <img :src="imgSrc" class="profile-circle">
                     </div>
                     <div class="profile-info-inline">
                         <div class="nickname">닉네임</div>
@@ -127,7 +127,6 @@ export default{
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 16px;
 }
 
 .profile-circle span {
