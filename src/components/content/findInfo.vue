@@ -68,6 +68,7 @@ export default {
               if(rep.success){
                 this.imp_uid= rep.imp_uid;
                 console.log(this.email);
+                console.log(this.imp_uid);
 
                 // 서버에서 해당 유저 id 찾아주기
                 axios.get(`http://192.168.5.10:8888/회사/회원/비번찾기/${this.email}/${this.imp_uid}`,

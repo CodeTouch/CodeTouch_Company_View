@@ -12,6 +12,8 @@
 .idea/**/dictionaries
 .idea/**/shelf
 
+public/images/*.png
+
 # AWS User-specific
 .idea/**/aws.xml
 

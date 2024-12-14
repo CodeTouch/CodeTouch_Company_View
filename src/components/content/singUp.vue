@@ -222,11 +222,11 @@ export default {
       <div class="form-col is-verification" v-if="verification">
         <div class="mb-3">
           <div class="input-font">이름</div>
-          <input type="text" id="name" name="name" v-model="userName" placeholder="이름을 입력하세요">
+          <input type="text" id="name" name="name" v-model="userName" placeholder="이름을 입력하세요" readonly>
         </div>
         <div class="mb-3">
           <div class="input-font">전화번호</div>
-          <input type="text" id="phone" name="phone" v-model="userPhone" placeholder="번호를 입력하세요">
+          <input type="text" id="phone" name="phone" v-model="userPhone" placeholder="번호를 입력하세요" readonly>
         </div>
       </div>
 
@@ -295,10 +295,10 @@ export default {
   box-sizing: border-box;
 }
 
-/* .is-verification input{
+.is-verification input{
     background: #c2c2c28f;
     pointer-events: none;
-}  */
+} 
 
 .form-container input:focus,
 .form-container textarea:focus {
