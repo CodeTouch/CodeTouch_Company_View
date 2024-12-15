@@ -15,7 +15,7 @@ export default{
     },
     computed:{
         isLogin(){
-            if (localStorage.getItem('AuthToekn')){
+            if (localStorage.getItem('AuthToken')){
                 return true;
             }else{
                 return false;

@@ -1,5 +1,6 @@
 <script>
 import axios from 'axios';
+import debounce from "lodash/debounce";
 
 export default{
     data(){
@@ -17,7 +18,7 @@ export default{
         closeBtn(){
             this.$emit('close-modal');
         },
-        validatePassword(){
+        validatePassword: debounce(function () {
             const requestData = {
                 "email": localStorage.getItem('email'),
                 "password": this.password,
@@ -30,12 +31,13 @@ export default{
             .then(response => {
                 if(response.status == 200){
                     this.inputPass = true;
+                    this.passwordError = "";    
                 }
             })
             .catch(error => {
                 this.passwordError = "비밀번호가 일치하지 않습니다.";
             });
-        },
+        }, 500),
         validateNewPassword() {
             const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
             if (!this.newPassword) {
