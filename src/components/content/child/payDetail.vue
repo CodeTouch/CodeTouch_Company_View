@@ -1,11 +1,28 @@
+<script>
+export default{
+    data(){
+        return {
+
+        }
+    },
+    props:{
+        receipt:Object,
+    },
+    computed:{
+
+    }
+}
+</script>
+
 <template>
    <div class="notification-section">
        <div class="notification-item">
-           <span>사이트 노내일</span>
-           <button class="confirm-button">확인중</button>
+           <span>{{  receipt.siteName  }}</span>
+           <button class="confirm-button">{{ receipt.payState }}</button>
        </div>
-       <div class="notification-item">요금제가 곧 만료됩니다.</div>
-       <div class="notification-item">결제수단 정보가 필요합니다.</div>
+       <div class="notification-item">{{ receipt.expiry }}</div>
+       <div class="notification-item">{{ receipt.amount }}</div>
+       <div class="notification-item">{{ receipt.payMethod }}, {{ receipt.createAt }} </div> 
    </div>
 </template>
 <style scoped>

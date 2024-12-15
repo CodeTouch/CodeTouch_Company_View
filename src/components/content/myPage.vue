@@ -1,17 +1,29 @@
 <script>
 import { useUserStore } from '@/Store/userLoginStore';
 import payDetail from './child/payDetail.vue';
+import axios from 'axios';
 
 export default{
     data(){
         return{
+            receiptList : [],
         }
     },
     components:{
         payDetail,
     },  
     mounted(){
-
+        axios.get(`http://192.168.5.10:8888/회사/회원/결제내역조회/${this.userStore.userData.userEmail}`,
+                { withCredentials: true,
+                //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
+                })
+                .then(response => {
+                    console.log("성공");
+                    this.receiptList = response.data;
+                })
+                .catch(error => {
+                    console.log("실패");
+                });
     },
     computed:{
         userStore() {
@@ -70,10 +82,14 @@ export default{
                 <h2>결제 내역</h2>
                     <button class="nav-button">더보기</button>
             </div>
-            <div>
-                <payDetail/>
-                <payDetail/>
-                <payDetail/>
+            <div v-for="(receipt, index) in receiptList" :key="index">
+                <payDetail :receipt="receipt" />
+            </div>
+            <div v-if="!receiptList">
+                <h2 class="section-title">이용중인 정기결제</h2>
+                <div class="payment-card">
+                    <p class="empty-text">정기결제 내역이 없습니다.</p>
+                </div>
             </div>
         </div>
     </div>

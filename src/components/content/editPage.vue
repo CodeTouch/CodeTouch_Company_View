@@ -50,7 +50,7 @@ export default {
                     onSuccess: (response) => {
                         this.imp_uid = response.imp_uid;
 
-                        axios.get(`http://192.168.5.10:8888/패스/인증/${this.imp_uid}`, { withCredentials: true })
+                        axios.get(`http://192.168.5.10:8888/회사/패스/인증/${this.imp_uid}`, { withCredentials: true })
                         .then(response => {
                             const user = response.data.data;
                             this.userName = user.name;
