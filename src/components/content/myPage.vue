@@ -1,15 +1,37 @@
 <script>
+import { useUserStore } from '@/Store/userLoginStore';
+import payDetail from './child/payDetail.vue';
+
 export default{
     data(){
         return{
-            imgSrc: '',
         }
     },
+    components:{
+        payDetail,
+    },  
     mounted(){
-        const storedImage = localStorage.getItem('image');
-            if (storedImage) {
-                this.imgSrc = `/images/${storedImage}`;
-            }
+
+    },
+    computed:{
+        userStore() {
+            return useUserStore(); 
+        },
+        userName() {
+            return this.userStore.userData.userName;
+        },
+        userNickName() {
+            return this.userStore.userData.userNickname;
+        },
+        userPhone() {
+            return this.userStore.userData.userPhone;
+        },
+        userEmail() {
+            return this.userStore.userData.userEmail;
+        },
+        userImage(){
+            return this.userStore.userData.userImgURL;
+        }
     }
 }
 </script>
@@ -17,7 +39,7 @@ export default{
 <template>
     <div class="container">
         <!-- 정보수정 섹션 -->
-        <div class="section">
+        <div class="section-info">
             <div class="section-header">
                 <h2>정보수정</h2>
                 <router-link to="/editPage">
@@ -27,16 +49,16 @@ export default{
             <div class="profile-section">
                 <div class="profile-header">
                     <div class="profile-circle">
-                        <img :src="imgSrc" class="profile-circle">
+                        <img :src="userImage" class="profile-circle">
                     </div>
                     <div class="profile-info-inline">
-                        <div class="nickname">닉네임</div>
-                        <div class="email">email@example.com</div>
+                        <div class="nickname">{{userNickName}}</div>
+                        <div class="email">{{userEmail}}</div>
                     </div>
                 </div>
                 <div class="homepage left-align">
-                    이름<br />
-                    전화번호<br />
+                    {{userName}}<br />
+                    {{userPhone}}<br />
                     홈페이지 주소
                 </div>
             </div>
@@ -48,13 +70,10 @@ export default{
                 <h2>결제 내역</h2>
                     <button class="nav-button">더보기</button>
             </div>
-            <div class="notification-section">
-                <div class="notification-item">
-                    <span>사이트 노내일</span>
-                    <button class="confirm-button">확인중</button>
-                </div>
-                <div class="notification-item">요금제가 곧 만료됩니다.</div>
-                <div class="notification-item">결제수단 정보가 필요합니다.</div>
+            <div>
+                <payDetail/>
+                <payDetail/>
+                <payDetail/>
             </div>
         </div>
     </div>
@@ -77,6 +96,14 @@ export default{
 }
 
 /* 공통 섹션 스타일 */
+.section-info {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    padding: 24px;
+    max-height: 300px;
+}
+
 .section {
     background: white;
     border-radius: 8px;

@@ -1,21 +1,42 @@
 import { defineStore } from "pinia"
-import { ref } from 'vue'
+import { reactive } from 'vue'
 
 export const useUserStore = defineStore('login',() => {
-    const userEmail = ref('');
-    const userImgURL = ref('');
-    const userName = ref('');
-    const userNickname = ref('');
-    const userPhone = ref('');
-
+    const userData = reactive({
+        isLogin: false,
+        userEmail: '',
+        userImgURL: '',
+        userName: '',
+        userNickname: '',
+        userPhone: '',
+    })
 
     function setUserData(data){
-        userEmail.value = data.email;
-        userImgURL.value = data.img;
-        userName.value = data.name;
-        userNickname.value = data.nickname;
-        userPhone.value = data.phone;
+        userData.isLogin = true;
+        userData.userEmail = data.email;
+        userData.userImgURL = data.img;
+        userData.userName = data.name;
+        userData.userNickname = data.nickname;
+        userData.userPhone = data.phone;
     }
 
-    return { userEmail, userImgURL, setUserData}
-})
+    function resetUserData(){
+        userData.isLogin = false;
+        userData.userEmail = '';
+        userData.userImgURL = '';
+        userData.userName = '';
+        userData.userNickname = '';
+        userData.userPhone = '';
+    }
+
+    return {
+        userData,
+        setUserData,
+        resetUserData
+    }
+}, {
+    persist:{
+        key: "userStore",
+        Storage: localStorage,
+    },
+});

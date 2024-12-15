@@ -1,24 +1,31 @@
 <script>
+import { useUserStore } from '@/Store/userLoginStore';
+
 export default{
   data() {
         return {
-          showlogin: true,
           showDropdown: false,
           userEmail: localStorage.getItem('UserEmail'),
-          imageSrc: ''
         };
     },
+    computed:{
+        userStore(){
+            return useUserStore();
+        },
+        userEmail(){
+          return this.userStore.userData.userEmail;
+        },
+        imageSrc(){
+          return this.userStore.userData.userImgURL;
+        },
+        showlogin(){
+          return this.userStore.userData.isLogin;
+        },
+        userName(){
+          return this.userStore.userData.userName;
+        }
+    },
     mounted(){
-        const token = localStorage.getItem("AuthToken");
-        if(token){
-          this.showlogin = false;
-        }else{
-          this.showlogin = true;
-        }
-        const storedImage = localStorage.getItem('image');
-        if (storedImage) {
-          this.imageSrc = `/images/${storedImage}`;
-        }
 
     },
     methods: {
@@ -33,9 +40,10 @@ export default{
         }
       },
       logout(){
+        localStorage.removeItem('userStore');
         localStorage.removeItem('AuthToken');
-        localStorage.removeItem('UserEmail');
-        localStorage.removeItem('image');
+        this.userStore.resetUserData();
+
         this.$router.push('/');
       }
     },
@@ -67,7 +75,7 @@ export default{
         </ul>
         <div class="auth-buttons">
 
-          <div class="login-container" v-if="!showlogin">
+          <div class="login-container" v-if="showlogin">
             <router-link to="/mySite">
               <div class="login-text">내 사이트</div>
             </router-link>
@@ -81,7 +89,7 @@ export default{
                   <img class="profile-circle" :src="imageSrc">
                 </div>
                 <div class="profile-info">
-                  <div class="profile-name">test</div>
+                  <div class="profile-name">{{userName}}</div>
                   <div class="profile-email">{{ userEmail }}</div>
                 </div>
               </div>
@@ -92,7 +100,7 @@ export default{
             </div>
           </div>
 
-          <router-link to="/login" v-if="showlogin">
+          <router-link to="/login" v-if="!showlogin">
             <button class="btn btn-outline">로그인</button>
           </router-link>
           </div>

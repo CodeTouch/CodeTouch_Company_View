@@ -1,4 +1,5 @@
 <script>
+import { useUserStore } from "@/Store/userLoginStore";
 import SiteRow from "./child/siteElement.vue";
 import axios from "axios";
 
@@ -6,8 +7,18 @@ export default {
     data(){
         return{
             viewModal: false,
-            imageSrc: '',
             siteList: [],
+        }
+    },
+    computed:{
+        userStore(){
+            return useUserStore();
+        },
+        userEmail(){
+            return this.userStore.userData.userEmail;
+        },
+        userImage(){
+            return this.userStore.userData.userImgURL;
         }
     },
     components:{
@@ -40,11 +51,11 @@ export default {
         <div class="profile">
             <div class="profile-image">
             <router-link to="/myPage">
-                <img class="profile-image" :src="imageSrc" alt="프로필 이미지">
+                <img class="profile-image" :src="userImage" alt="프로필 이미지">
                 <div class="profile-image-settings">⚙️</div>
             </router-link>
             </div>
-            <div class="profile-name">mysk423</div>
+            <div class="profile-name">{{userEmail}}</div>
         </div>
 
         <table class="menu-table">
