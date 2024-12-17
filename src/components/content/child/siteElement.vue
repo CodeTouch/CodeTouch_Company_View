@@ -60,7 +60,7 @@ export default {
         },
         deleteSite(){
           //const userEmail = this.userStore.userEmail;
-          const userEmail = localStorage.getItem('email')
+          const userEmail = localStorage.getItem('email');
           console.log(userEmail);
           console.log(this.site.siteId);
 
@@ -68,6 +68,7 @@ export default {
                     { withCredentials: true }
                 )
                 .then(response => {
+                  console.log("성공");
                 })
                 .catch(error => {
                 });

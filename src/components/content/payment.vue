@@ -1,25 +1,36 @@
 <script>
 import axios from 'axios';
+import { useUserStore } from '@/Store/userLoginStore';
 
 export default{
     data(){
         return{
-            
+            isLogin: false,
         }
     },
     computed:{
         modal(){
             return document.getElementById("customModal");
-        }
+        },
+        userStore(){
+            return useUserStore();
+        },
     },
     methods:{
         checkSite(){
-            axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${localStorage.getItem('UserEmail')}`,
+            if (localStorage.getItem('AuthToken') == null){
+                this.isLogin = true;
+                this.openModal();
+                return;
+            }
+
+            axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${this.userStore.userData.userEmail}`,
             { withCredentials: true,
             //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
             })
             .then(response => {
                 const siteList = response.data.SiteList;
+                console.log(response.data)
                 if(siteList){
 
                     localStorage.setItem('siteList', JSON.stringify(siteList));
@@ -30,6 +41,7 @@ export default{
                 }
             })
             .catch(error => {
+                console.log(error)
                 this.openModal();
             });
         },
@@ -46,6 +58,20 @@ export default{
 }
 </script>
 <template>
+    <div class="modal-overlay" id="customModal">
+        <div class="modal" v-if="!isLogin">
+            <h2>생성된 사이트가 없습니다. 생성하시겠습니까?</h2>
+            <button class="cancel-button" @click="closeModal()">취소</button>
+            <button class="move-button" @click="moveToPage()">이동하기</button>
+        </div>
+        <div class="modal" v-if="isLogin">
+            <h2>로그인이 필요한 서비스입니다. 로그인 하시겠습니까?</h2>
+            <button class="cancel-button" @click="closeModal()">취소</button>
+            <router-link to="/login">
+                <button class="move-button">로그인 이동</button>
+            </router-link>
+        </div>
+    </div>
     <div class="container">
         <h1>요금제 비교</h1>
         <div class="pricing-plans">
@@ -61,7 +87,9 @@ export default{
                     <li class="unavailable">맞춤형 보고서</li>
                 </ul>
                 <div class="plan-footer">
-                    <button>무료로 시작하기</button>
+                    <router-link to="/template">
+                        <button>무료로 시작하기</button>
+                    </router-link>
                 </div>
             </div>
             <div class="plan pro">

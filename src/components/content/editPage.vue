@@ -1,103 +1,216 @@
 <script>
 import editPW from './modal/editPW.vue';
+import axios from 'axios';
+import { useUserStore } from '@/Store/userLoginStore';
+import { initializeIMP, certification } from "@/JavaScript/payment.js"; 
 
-export default{
-    data(){
+export default {
+    data() {
         return {
+            viewPWModal: false,
+            activeTab: 'info', // 'info': 정보 수정, 'payment': 결제 내역
             userEmail: '',
-            viewPWModal: '',
+            userName: '',
+            userNickname: '',
+            userPhone: '',
+            selectedFile: null,
+            selectedFileName: '',
+            profileImage: '',
+            receiptList: [],
+        };
+    },
+    computed: {
+        userStore() {
+            return useUserStore();
         }
     },
-    components:{
+    components: {
         editPW,
     },
-    mounted(){
-        this.userEmail = localStorage.getItem('email');
+    mounted() {
+        initializeIMP();
+        
+        // Pinia 상태에서 사용자 정보 가져오기
+        this.userName = this.userStore.userData.userName;
+        this.userNickname = this.userStore.userData.userNickname;
+        this.userPhone = this.userStore.userData.userPhone;
+        this.userEmail = this.userStore.userData.userEmail;
+        this.profileImage = this.userStore.userData.userImgURL;
+
+        this.activeTab = this.$route.query.activeTab;
+
+        axios.get(`http://192.168.5.10:8888/회사/회원/결제내역조회/${this.userStore.userData.userEmail}/${false}`,
+                { withCredentials: true,
+                //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
+                })
+                .then(response => {
+                    console.log("성공");
+                    console.log(response);
+                    this.receiptList = response.data;
+                })
+                .catch(error => {
+                    console.log(error);
+                    console.log("실패");
+                });
     },
-    methods:{
-        editProfile(){
+    methods: {
+        openModal() {
+            this.viewPWModal = !this.viewPWModal;
+        },
+        switchTab(tabName) {
+            this.activeTab = tabName; // 클릭한 탭의 이름으로 상태 변경
+        },
+        reAuth(e) {
+            e.stopPropagation();
+            certification(
+                {
+                    onSuccess: (response) => {
+                        this.imp_uid = response.imp_uid;
 
+                        axios.get(`http://192.168.5.10:8888/회사/패스/인증/${this.imp_uid}`, { withCredentials: true })
+                        .then(response => {
+                            const user = response.data.data;
+                            this.userName = user.name;
+                            this.userPhone = user.phone;
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                    },
+                    onFailure: (response) => {
+                        console.log("본인인증 실패");
+                    }
+                }
+            );
+        },
+        submitForm(e) {
+            e.stopPropagation();
+            console.log(this.selectedFileName);
 
-            axios.post(`http://192.168.5.10:8888/회사/회원/개인정보수정`, 
-            requestData,
-            { withCredentials: true }
-            )
+            const formData = new FormData();
+            formData.append('updateImage', this.selectedFile);
+            formData.append('updateImageName', this.selectedFileName);
+            formData.append('name', this.userName);
+            formData.append('nickname', this.userNickname);
+            formData.append('phone', this.userPhone);
+            formData.append('email', this.userEmail);
+
+            axios.post(`http://192.168.5.10:8888/회사/회원/개인정보수정`, formData, {   
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
             .then(response => {
-              if(response.status == 200){
-                
-              }
+                console.log("성공");
             })
             .catch(error => {
-              console.error(error);
+                console.log("실패");
             });
         },
-        openModal(){
-            this.viewPWModal = !this.viewPWModal;
-        }
-    }
-}
-
-
+        selectImage() {
+            this.$refs.fileInput.click();
+        },
+        handleImageUpload(e) {
+            e.stopPropagation();
+            const file = e.target.files[0];
+            if (file) {
+                this.selectedFile = file;
+                this.selectedFileName = file.name;
+                console.log(this.selectedFile);
+                this.profileImage = URL.createObjectURL(file);
+            }
+        },
+    },
+};
 </script>
+
 <template>
     <div class="modal-overlay" v-if="viewPWModal">
-        <editPW></editPW>
+        <editPW @close-modal="openModal"></editPW>
     </div>
     <div class="container">
+        <!-- 페이지 타이틀 -->
         <h1 class="page-title">마이페이지</h1>
 
+        <!-- 고정된 네비게이션 -->
         <nav class="nav-tabs">
-            <a href="#" class="nav-tab active">정보수정</a>
-            <a href="#" class="nav-tab">결제내역</a>
+            <div class="nav-tab" 
+                 :class="{ active: activeTab === 'info' }" 
+                 @click="switchTab('info')">
+                정보수정
+            </div>
+            <div class="nav-tab" 
+                 :class="{ active: activeTab === 'payment' }" 
+                 @click="switchTab('payment')">
+                결제내역
+            </div>
         </nav>
 
-        <div class="profile-section">
-            <div class="profile-image">
-                😊
-            </div>
-            <div class="profile-name">{{userEmail}}</div>
-        </div>
+        <!-- 콘텐츠 영역 -->
+        <div class="tab-content">
+            <!-- 정보 수정 -->
+            <div v-if="activeTab === 'info'" class="tab-pane">
+                <form @submit.prevent="submitForm">
+                    <div class="profile-section" @click="selectImage">
+                        <div class="profile-image">
+                            <img :src="profileImage" class="profile-image">
+                        </div>
+                        <input type="file" ref="fileInput" @change="handleImageUpload" style="display: none;">
+                        <div class="profile-name">{{ userEmail }}</div>
+                    </div>
 
-        <form>
-            
-            <div class="form-group">
-                <label class="form-label">이름</label>
-                <input type="text" class="form-input" placeholder="이름을 입력하세요">
+                    <div class="form-group">
+                        <label class="form-label">이름</label>
+                        <input type="text" class="form-input input-none" v-model="userName" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">이메일</label>
+                        <input type="email" class="form-input input-none" v-model="userEmail" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">닉네임</label>
+                        <input type="text" class="form-input" v-model="userNickname">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">비밀번호</label>
+                        <div class="input-group">
+                            <input type="password" class="form-input input-none" placeholder="******" readonly>
+                            <button type="button" class="verify-button" @click="openModal">변경</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">휴대폰번호</label>
+                        <input type="tel" class="form-input input-none" v-model="userPhone">
+                    </div>
+
+                    <button type="button" class="reAuth-button" @click="reAuth">재 인증</button>
+
+                    <div class="button-group">
+                        <button type="submit" class="submit-button primary">변경사항 저장</button>
+                        <router-link to="/myPage">
+                            <button type="button" class="submit-button secondary">취소</button>
+                        </router-link>
+                    </div>
+                </form>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">이메일</label>
-                <input type="email" class="form-input" :value="userEmail" readonly>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">닉네임</label>
-                <input type="text" class="form-input" value="닉네임">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">비밀번호</label>
-                <div class="input-group">
-                    <input type="password" class="form-input" placeholder="******" readonly>
-                    <button type="button" class="verify-button" @click="openModal">변경</button>
+            <!-- 결제 내역 -->
+            <div v-if="activeTab === 'payment'" class="tab-pane">
+                <h2 class="section-title">이용중인 정기결제</h2>
+                <div class="payment-card">
+                    <p class="empty-text" v-if="!receiptList">정기결제 내역이 없습니다.</p>
+                    
                 </div>
             </div>
-
-            <div class="form-group">
-                <label class="form-label">휴대폰번호</label>
-                <input type="tel" class="form-input" placeholder="01012345678">
-            </div>
-
-            <div class="button-group">
-                <button type="submit" class="submit-button primary">변경사항 저장</button>
-                <router-link to="/myPage">
-                    <button type="button" class="submit-button secondary">취소</button>
-                </router-link>
-            </div>
-
-        </form>
+        </div>
     </div>
 </template>
+
 <style scoped>
         * {
             margin: 0;
@@ -112,48 +225,59 @@ export default{
             line-height: 1.5;
         }
 
-        .container {
-            max-width: 560px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
+.container {
+    max-width: 800px; /* 중앙 정렬 */
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
 
-        .page-title {
-            font-size: 24px;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 40px;
-        }
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
 
         /* 탭 네비게이션 */
         .nav-tabs {
-            display: flex;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 40px;
-        }
+    position: sticky; /* 상단 고정 */
+    top: 0; /* 페이지 상단에 위치 */
+    z-index: 100; /* 다른 요소 위에 표시 */
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
 
-        .nav-tab {
-            padding: 16px 24px;
-            color: #666;
-            text-decoration: none;
-            font-size: 15px;
-            position: relative;
-        }
+.nav-tab {
+    flex: 1;
+    text-align: center;
+    font-size: 16px;
+    padding: 10px 0;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s, border-bottom 0.2s;
+}
 
-        .nav-tab.active {
-            color: #333;
-            font-weight: 500;
-        }
+.nav-tab.active {
+    color: #333;
+    font-weight: bold;
+    border-bottom: 2px solid #333;
+}
 
-        .nav-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #333;
-        }
+.tab-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.tab-pane {
+    animation: fade-in 0.3s ease-in-out;
+}
 
         /* 프로필 섹션 */
         .profile-section {
@@ -166,7 +290,7 @@ export default{
             height: 80px;
             background-color: #eee;
             border-radius: 50%;
-            margin: 0 auto 16px;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -190,6 +314,11 @@ export default{
             margin-bottom: 8px;
         }
 
+        .input-none{
+            background: #c2c2c28f;
+            pointer-events: none;
+        }
+
         .form-input {
             width: 100%;
             padding: 12px;
@@ -210,6 +339,18 @@ export default{
 
         .verify-button {
             padding: 12px 24px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .reAuth-button{
+            padding: 12px 24px;
+            width: 280px;
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -270,6 +411,17 @@ export default{
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000; /* 최상단으로 설정 */
+}
+
+.nav-tab {
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+
+.nav-tab.active {
+    color: #333;
+    font-weight: bold;
 }
 
 </style>

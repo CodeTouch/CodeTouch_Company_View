@@ -1,7 +1,7 @@
 <script>
-const { IMP } = window;
 import axios from "axios";
 import { initializeIMP, requestPayment } from "@/JavaScript/payment.js";
+import { useUserStore } from "@/Store/userLoginStore";
 
 export default {
   data(){
@@ -20,6 +20,9 @@ export default {
         localStorage.removeItem('siteList');
     },
     computed:{
+        userStore(){
+          return useUserStore();
+        },
         price() {
             if (this.selectedPeriod === "12") {
                 // 12개월 선택 시 할인 적용
@@ -57,17 +60,20 @@ export default {
         requestPayment({
             name: "site_id",                                //결제 상품 이름
             amount: this.selectedPeriod === "12" ? 14000 * 12 : this.defaultPrice * this.selectedPeriod, // 상품 가격
-            buyerEmail: localStorage.getItem("userEmail"), // 구매자 이메일
+            buyerEmail: this.userStore.userData.userEmail, // 구매자 이메일
             buyerName: "테스터",                            // 구매자 이름
             buyerTel: "010-1234-5678",                      // 구매자 전화번호
             onSuccess: (response) => {                      // 성공 이후 메서드
                 console.log("결제 성공", response);
                 // 성공 시 처리 로직 추가
 
+                console.log(response.merchant_uid)
+
                 const param = {
-                    email: localStorage.getItem("UserEmail"),
+                    email: this.userStore.userData.userEmail,
                     siteId: this.selectedSite.siteId,
                     expiry: this.nextPaymentDate,
+                    merchantId: response.merchant_uid,
                 }
 
                 axios.post(`http://192.168.5.10:8888/회사/회원/결제내역저장`, param,

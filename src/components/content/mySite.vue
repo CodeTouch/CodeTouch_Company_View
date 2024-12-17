@@ -1,4 +1,5 @@
 <script>
+import { useUserStore } from "@/Store/userLoginStore";
 import SiteRow from "./child/siteElement.vue";
 import axios from "axios";
 
@@ -6,8 +7,18 @@ export default {
     data(){
         return{
             viewModal: false,
-            imageSrc: '',
             siteList: [],
+        }
+    },
+    computed:{
+        userStore(){
+            return useUserStore();
+        },
+        userEmail(){
+            return this.userStore.userData.userEmail;
+        },
+        userImage(){
+            return this.userStore.userData.userImgURL;
         }
     },
     components:{
@@ -17,12 +28,7 @@ export default {
 
     },
     mounted(){
-        const storedImage = localStorage.getItem('image');
-        if (storedImage) {
-          this.imageSrc = `/images/${storedImage}`;
-        }
-
-        axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${localStorage.getItem('email')}`,
+        axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${this.userStore.userData.userEmail}`,
             { withCredentials: true,
             //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
             })
@@ -30,6 +36,7 @@ export default {
                 this.siteList = response.data.SiteList || [];
             })
             .catch(error => {
+                console.log(error)
             });
     }
 
@@ -40,19 +47,19 @@ export default {
         <div class="profile">
             <div class="profile-image">
             <router-link to="/myPage">
-                <img class="profile-image" :src="imageSrc" alt="프로필 이미지">
+                <img class="profile-image" :src="userImage" alt="프로필 이미지">
                 <div class="profile-image-settings">⚙️</div>
             </router-link>
             </div>
-            <div class="profile-name">mysk423</div>
+            <div class="profile-name">{{userEmail}}</div>
         </div>
 
         <table class="menu-table">
             <thead>
                 <tr>
                     <td class="active">내사이트</td>
-                    <td>상태</td>
-                    <td>도구</td>
+                    <td class="active">상태</td>
+                    <td class="active">도구</td>
                 </tr>
             </thead>
             <tbody>
@@ -80,6 +87,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000; /* 최상단으로 설정 */
 }
         * {
             margin: 0;

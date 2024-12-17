@@ -1,6 +1,7 @@
 <script>
 import axios from 'axios';
-const { IMP } = window;       
+import { initializeIMP, certification } from "@/JavaScript/payment.js";    
+import debounce from "lodash/debounce";
 
 export default {
   data() {
@@ -11,6 +12,7 @@ export default {
       userBirth: '',
       userGender: 0,
       verification: false,
+      emailDupicateError: '',
       emailError: '',
       passwordError: '',
       email: '',
@@ -35,26 +37,22 @@ export default {
     },
   },
   mounted() {
-    if(IMP){
-        IMP.init("imp22383085");                    // 결제 대행사에서 발급받은 아이디
-    }else{
-        console.log("SDK 로드 안됨.");
-    }
+    initializeIMP();
   },
   methods: {
+    // 폼 제출 처리
     submitForm() {
-      // 폼 검증
       this.validateEmail();
       this.validatePassword();
       this.confirmPassword();
 
       if (this.emailError || this.passwordError || this.checkPasswordError) {
-        alert('폼을 올바르게 작성해주세요.');
+        alert("폼을 올바르게 작성해주세요.");
         return;
       }
 
       if (!this.agreeAll) {
-        alert('약관에 동의해주세요.');
+        alert("약관에 동의해주세요.");
         return;
       }
 
@@ -70,83 +68,105 @@ export default {
 
       console.log(requestData);
 
-      axios.post(`http://192.168.5.10:8888/회사/회원/회원가입`, 
-      requestData,
-      { withCredentials: true }
-      )
-            .then(response => {
-              if(response.status == 200){
-                this.$router.push('/login');
-              }
+      axios
+        .post("http://192.168.5.10:8888/회사/회원/회원가입", requestData, { withCredentials: true })
+        .then((response) => {
+          if (response.status === 200) {
+            this.$router.push("/login");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+
+    // 이메일 유효성 검사
+    validateEmail() {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!this.email) {
+        this.emailError = "이메일을 입력해주세요.";
+      } else if (!emailRegex.test(this.email)) {
+        this.emailError = "유효한 이메일 형식을 입력해주세요.";
+      } else {
+        this.emailError = null;
+      }
+    },
+
+    // 비밀번호 유효성 검사
+    validatePassword() {
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+      if (!this.password) {
+        this.passwordError = "비밀번호를 입력해주세요.";
+      } else if (!passwordRegex.test(this.password)) {
+        this.passwordError = "비밀번호는 6자리 이상, 숫자와 영어 조합이어야 합니다.";
+      } else {
+        this.passwordError = null;
+      }
+    },
+
+    // 비밀번호 확인 검사
+    confirmPassword() {
+      if (this.password !== this.checkPassword) {
+        this.checkPasswordError = "비밀번호가 일치하지 않습니다.";
+      } else {
+        this.checkPasswordError = null;
+      }
+    },
+
+    // 본인 인증
+    certification() {
+      certification({
+        onSuccess: (response) => {
+          this.verification = true;
+          this.imp_uid = response.imp_uid;
+
+          axios
+            .get(`http://192.168.5.10:8888/회사/패스/인증/${this.imp_uid}`, { withCredentials: true })
+            .then((response) => {
+              const user = response.data.data;
+              this.userName = user.name;
+              this.userPhone = user.phone;
+              this.userBirth = user.birth;
+              this.userGender = user.gender;
             })
-            .catch(error => {
+            .catch((error) => {
               console.error(error);
             });
+        },
+        onFailure: (response) => {
+          console.error("본인 인증 실패:", response);
+        },
+      });
     },
-        validateEmail() {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!this.email) {
-                this.emailError = "이메일을 입력해주세요.";
-            } else if (!emailRegex.test(this.email)) {
-                this.emailError = "유효한 이메일 형식을 입력해주세요.";
-            } else {
-                this.emailError = null;
-            }
-        },
-        validatePassword() {
-            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
-            if (!this.password) {
-                this.passwordError = "비밀번호를 입력해주세요.";
-            } else if (!passwordRegex.test(this.password)) {
-                this.passwordError = "비밀번호는 6자리 이상, 숫자와 영어 조합이어야 합니다.";
-            } else {
-                this.passwordError = null;
-            }
-        },
-        confirmPassword(){
-          if (this.password != this.checkPassword){
-            this.checkPasswordError = "비밀번호가 일치하지 않습니다.";
-          } else {
-                this.checkPasswordError = null;
-          }
-        },
-        certification(){
-          IMP.certification(
-            {},
-            (rep) => {
-              if(rep.success){
-                this.verification = true;
-                this.imp_uid= rep.imp_uid;
 
-                axios.get(`http://192.168.5.10:8888/패스/인증/${this.imp_uid}`, { withCredentials: true })
-                .then(response => {
-                  const user = response.data.data;
-                  this.userName = user.name;
-                  this.userPhone = user.phone;
-                  this.userBirth = user.birth;
-                  this.userGender = user.gender;
-                })
-                .catch(error => {
-                  console.error(error);
-                });
-              }
-              else{
-                console.log("테스트 3");
-              }
-            }
-          )
+    // 약관 전체 동의 처리
+    checkAll(event) {
+      const isChecked = event.target.checked;
+      this.agreeTerms = isChecked;
+      this.agreePrivacy = isChecked;
+    },
+
+    // 약관 상태 업데이트
+    updateAgreeAll() {
+      this.agreeAll = this.agreeTerms && this.agreePrivacy;
+    },
+
+    // 이메일 중복 확인
+    duplicateCheck: debounce(function () {
+        if (this.email.length > 0) {
+          axios
+            .get(`http://192.168.5.10:8888/회사/회원/회원가입/중복확인/${this.email}`, { withCredentials: true })
+            .then((response) => {
+              console.log("중복 아님");
+            })
+            .catch((error) => {
+              console.error(error);
+              this.emailError = "이메일 중복";
+            });
         }
-      },
-      checkAll() {
-        const isChecked = event.target.checked; // 전체 동의 체크박스 상태
-        this.agreeTerms = isChecked;
-        this.agreePrivacy = isChecked;
-    },
-
-      updateAgreeAll() {
-        this.agreeAll = this.agreeTerms && this.agreePrivacy;
-      },
-    }
+      }, 500),
+    } 
+}
 </script>
 
 <template>
@@ -165,12 +185,14 @@ export default {
           id="email"
           name="email"
           placeholder="이메일을 입력하세요"
+          @input="duplicateCheck"
           @blur="validateEmail"
           :class="{ 'invalid': emailError }" 
           v-model="email"
           required
         >
         <span v-if="emailError" class="error">{{ emailError }}</span>
+        <span v-if="emailDupicateError" class="error">{{ emailDupicateError }}</span>
         </div>
 
       <!-- 닉네임 -->

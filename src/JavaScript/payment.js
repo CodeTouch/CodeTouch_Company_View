@@ -9,6 +9,27 @@ export function initializeIMP() {
   }
 }
 
+export function certification({
+  onSuccess,
+  onFailure,
+}){
+  if(!IMP){
+    console.log("아임포트 SDK 로드 실패");
+    return;
+  }
+
+  IMP.certification(
+    {},
+    (rep) => {
+      if(rep.success){
+        if (onSuccess) onSuccess(rep);
+      } else {
+        if (onFailure) onFailure(rep);
+      }
+    }
+  )
+}
+
 export function requestPayment({
   pg = "html5_inicis",
   payMethod = "card",

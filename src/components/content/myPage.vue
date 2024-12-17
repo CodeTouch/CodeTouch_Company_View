@@ -1,15 +1,51 @@
 <script>
+import { useUserStore } from '@/Store/userLoginStore';
+import payDetail from './child/payDetail.vue';
+import axios from 'axios';
+
 export default{
     data(){
         return{
-            imgSrc: '',
+            receiptList : [],
         }
     },
+    components:{
+        payDetail,
+    },  
     mounted(){
-        const storedImage = localStorage.getItem('image');
-            if (storedImage) {
-                this.imgSrc = `/images/${storedImage}`;
-            }
+        axios.get(`http://192.168.5.10:8888/회사/회원/결제내역조회/${this.userStore.userData.userEmail}/${false}`,
+                { withCredentials: true,
+                //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
+                })
+                .then(response => {
+                    console.log("성공");
+                    console.log(response);
+                    this.receiptList = response.data;
+                })
+                .catch(error => {
+                    console.log(error);
+                    console.log("실패");
+                });
+    },
+    computed:{
+        userStore() {
+            return useUserStore(); 
+        },
+        userName() {
+            return this.userStore.userData.userName;
+        },
+        userNickName() {
+            return this.userStore.userData.userNickname;
+        },
+        userPhone() {
+            return this.userStore.userData.userPhone;
+        },
+        userEmail() {
+            return this.userStore.userData.userEmail;
+        },
+        userImage(){
+            return this.userStore.userData.userImgURL;
+        }
     }
 }
 </script>
@@ -17,26 +53,26 @@ export default{
 <template>
     <div class="container">
         <!-- 정보수정 섹션 -->
-        <div class="section">
+        <div class="section-info">
             <div class="section-header">
                 <h2>정보수정</h2>
-                <router-link to="/editPage">
+                <router-link :to="{path: '/editPage', query: { activeTab: 'info' }}">
                     <button class="nav-button">수정하기</button>
                 </router-link>
             </div>
             <div class="profile-section">
                 <div class="profile-header">
                     <div class="profile-circle">
-                        <img :src="imgSrc" width="60px" height="60px">
+                        <img :src="userImage" class="profile-circle">
                     </div>
                     <div class="profile-info-inline">
-                        <div class="nickname">닉네임</div>
-                        <div class="email">email@example.com</div>
+                        <div class="nickname">{{userNickName}}</div>
+                        <div class="email">{{userEmail}}</div>
                     </div>
                 </div>
                 <div class="homepage left-align">
-                    이름<br />
-                    전화번호<br />
+                    {{userName}}<br />
+                    {{userPhone}}<br />
                     홈페이지 주소
                 </div>
             </div>
@@ -46,15 +82,18 @@ export default{
         <div class="section">
             <div class="section-header">
                 <h2>결제 내역</h2>
+                <router-link :to="{path: '/editPage', query: { activeTab: 'payment' }}">
                     <button class="nav-button">더보기</button>
+                </router-link>
             </div>
-            <div class="notification-section">
-                <div class="notification-item">
-                    <span>사이트 노내일</span>
-                    <button class="confirm-button">확인중</button>
+            <div v-for="(receipt, index) in receiptList" :key="index">
+                <payDetail :receipt="receipt" />
+            </div>
+            <div v-if="!receiptList">
+                <h2 class="section-title">이용중인 정기결제</h2>
+                <div class="payment-card">
+                    <p class="empty-text">정기결제 내역이 없습니다.</p>
                 </div>
-                <div class="notification-item">요금제가 곧 만료됩니다.</div>
-                <div class="notification-item">결제수단 정보가 필요합니다.</div>
             </div>
         </div>
     </div>
@@ -77,6 +116,14 @@ export default{
 }
 
 /* 공통 섹션 스타일 */
+.section-info {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    padding: 24px;
+    max-height: 300px;
+}
+
 .section {
     background: white;
     border-radius: 8px;
@@ -127,7 +174,6 @@ export default{
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 16px;
 }
 
 .profile-circle span {

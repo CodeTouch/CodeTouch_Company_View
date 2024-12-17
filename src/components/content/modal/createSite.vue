@@ -26,6 +26,7 @@ export default {
                 .then(response => {
                     if (response == 200){
                         console.log("성공!!");
+                        this.$router.push("/mySite");
                     }
                 })
                 .catch(error => {

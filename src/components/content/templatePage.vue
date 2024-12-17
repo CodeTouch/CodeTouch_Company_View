@@ -13,6 +13,15 @@ export default{
         createSite,
         templates,
     },
+    computed:{
+        isLogin(){
+            if (localStorage.getItem('AuthToken')){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    },
     methods:{
         closeModal(){
             this.viewModal = false;
@@ -28,7 +37,16 @@ export default{
 
 <template>
     <div v-if="viewModal" class="modal-overlay">
-        <createSite @close="closeModal" :templateId="templateId"></createSite>
+        <div v-if="isLogin">
+            <createSite @close="closeModal" :templateId="templateId"></createSite>
+        </div>
+        <div class="modal" v-if="!isLogin">
+            <h2>로그인이 필요한 서비스입니다. 로그인 하시겠습니까?</h2>
+            <button class="cancel-button" @click="closeModal()">취소</button>
+            <router-link to="/login">
+                <button class="move-button">로그인 이동</button>
+            </router-link>
+        </div>
     </div>
 
     <div class="container">
@@ -60,6 +78,7 @@ export default{
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000; /* 최상단으로 설정 */
 }
         * {
             margin: 0;
@@ -109,5 +128,45 @@ export default{
             display: flex;
             align-items: center;
             gap: 4px;
+        }
+                /* 모달 박스 */
+                .modal {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+        }
+
+        .modal button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .modal .cancel-button {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .modal .cancel-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .modal .move-button {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .modal .move-button:hover {
+            background-color: #0056b3;
         }
 </style>

@@ -73,14 +73,26 @@ export default {
                             localStorage.setItem('email', this.email); 
                             localStorage.setItem('password', this.hashPassword(this.password));
                         }
-
+                        
                         const token = response.headers['Authorization'] || response.headers['authorization'];
 
                         if(token){
                             const bearerToken = token.split(' ')[1];  //Bearer 부분 제거 후 토큰만 저장
+
+                            const userData = {
+                                email: this.email || "", 
+                                name: response.data.name || "", 
+                                nickname: response.data.nickname || "",
+                                phone: response.data.phone || "",
+                                img: response.data.imageUrl || "",
+                            };
+
+                            console.log(userData);
+                            this.userStore.setUserData(userData);
+
                             localStorage.setItem('AuthToken', bearerToken);
-                            localStorage.setItem('UserEmail', this.email);
-//                            userStore.setUserData(this.email, );
+                            //localStorage.setItem('image', response.data.imgUrl);
+                            //userStore.setUserData(this.email, );
                             const randomValue = Math.floor(Math.random() * 20) + 1;
                             const imageName = `${randomValue}.png`;
                             localStorage.setItem('image', imageName);
@@ -90,8 +102,7 @@ export default {
                 })
                 // 비밀번호, 아이디 서버 검증 실패
                 .catch(error => {
-                
-                    this.passwordError = error.response.data;
+                    console.log(error)
                 });
             }
         },
