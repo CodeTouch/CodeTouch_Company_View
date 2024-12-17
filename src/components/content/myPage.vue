@@ -13,15 +13,17 @@ export default{
         payDetail,
     },  
     mounted(){
-        axios.get(`http://192.168.5.10:8888/회사/회원/결제내역조회/${this.userStore.userData.userEmail}`,
+        axios.get(`http://192.168.5.10:8888/회사/회원/결제내역조회/${this.userStore.userData.userEmail}/${false}`,
                 { withCredentials: true,
                 //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
                 })
                 .then(response => {
                     console.log("성공");
+                    console.log(response);
                     this.receiptList = response.data;
                 })
                 .catch(error => {
+                    console.log(error);
                     console.log("실패");
                 });
     },
@@ -54,7 +56,7 @@ export default{
         <div class="section-info">
             <div class="section-header">
                 <h2>정보수정</h2>
-                <router-link to="/editPage">
+                <router-link :to="{path: '/editPage', query: { activeTab: 'info' }}">
                     <button class="nav-button">수정하기</button>
                 </router-link>
             </div>
@@ -80,7 +82,9 @@ export default{
         <div class="section">
             <div class="section-header">
                 <h2>결제 내역</h2>
+                <router-link :to="{path: '/editPage', query: { activeTab: 'payment' }}">
                     <button class="nav-button">더보기</button>
+                </router-link>
             </div>
             <div v-for="(receipt, index) in receiptList" :key="index">
                 <payDetail :receipt="receipt" />

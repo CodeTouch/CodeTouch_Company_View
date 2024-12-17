@@ -1,5 +1,6 @@
 <script>
 import axios from 'axios';
+import { useUserStore } from '@/Store/userLoginStore';
 
 export default{
     data(){
@@ -10,18 +11,20 @@ export default{
     computed:{
         modal(){
             return document.getElementById("customModal");
-        }
+        },
+        userStore(){
+            return useUserStore();
+        },
     },
     methods:{
         checkSite(){
-            console.log(localStorage.getItem('AuthToken'))
             if (localStorage.getItem('AuthToken') == null){
                 this.isLogin = true;
                 this.openModal();
                 return;
             }
 
-            axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${localStorage.getItem('UserEmail')}`,
+            axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${this.userStore.userData.userEmail}`,
             { withCredentials: true,
             //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
             })

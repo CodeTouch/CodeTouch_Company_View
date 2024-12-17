@@ -16,6 +16,7 @@ export default {
             selectedFile: null,
             selectedFileName: '',
             profileImage: '',
+            receiptList: [],
         };
     },
     computed: {
@@ -35,6 +36,22 @@ export default {
         this.userPhone = this.userStore.userData.userPhone;
         this.userEmail = this.userStore.userData.userEmail;
         this.profileImage = this.userStore.userData.userImgURL;
+
+        this.activeTab = this.$route.query.activeTab;
+
+        axios.get(`http://192.168.5.10:8888/회사/회원/결제내역조회/${this.userStore.userData.userEmail}/${false}`,
+                { withCredentials: true,
+                //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
+                })
+                .then(response => {
+                    console.log("성공");
+                    console.log(response);
+                    this.receiptList = response.data;
+                })
+                .catch(error => {
+                    console.log(error);
+                    console.log("실패");
+                });
     },
     methods: {
         openModal() {
@@ -186,7 +203,8 @@ export default {
             <div v-if="activeTab === 'payment'" class="tab-pane">
                 <h2 class="section-title">이용중인 정기결제</h2>
                 <div class="payment-card">
-                    <p class="empty-text">정기결제 내역이 없습니다.</p>
+                    <p class="empty-text" v-if="!receiptList">정기결제 내역이 없습니다.</p>
+                    
                 </div>
             </div>
         </div>

@@ -28,12 +28,7 @@ export default {
 
     },
     mounted(){
-        const storedImage = localStorage.getItem('image');
-        if (storedImage) {
-          this.imageSrc = `/images/${storedImage}`;
-        }
-
-        axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${localStorage.getItem('email')}`,
+        axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${this.userStore.userData.userEmail}`,
             { withCredentials: true,
             //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
             })
@@ -41,6 +36,7 @@ export default {
                 this.siteList = response.data.SiteList || [];
             })
             .catch(error => {
+                console.log(error)
             });
     }
 

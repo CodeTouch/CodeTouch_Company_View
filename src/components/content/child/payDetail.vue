@@ -9,7 +9,13 @@ export default{
         receipt:Object,
     },
     computed:{
-
+        receiptState(){
+            if (this.receipt.payState == 1){
+                return "PRO";
+            }else{
+                return "FREE"
+            }
+        }
     }
 }
 </script>
@@ -18,7 +24,7 @@ export default{
    <div class="notification-section">
        <div class="notification-item">
            <span>{{  receipt.siteName  }}</span>
-           <button class="confirm-button">{{ receipt.payState }}</button>
+           <button class="confirm-button">{{ receiptState }}</button>
        </div>
        <div class="notification-item">{{ receipt.expiry }}</div>
        <div class="notification-item">{{ receipt.amount }}</div>

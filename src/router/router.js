@@ -74,7 +74,7 @@ const routes = [
     //meta: { requiresAuth: true, showSidebar: true },
   },
   {
-    path: "/editPage",
+    path: '/editPage',
     name: "editPage",
     component: editPage,
     //meta: { requiresAuth: true, showSidebar: true },
