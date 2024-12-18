@@ -9,15 +9,30 @@ export default {
         selectedPeriod: '1',
         defaultPrice: 1,
         siteList: [],
-        selectedSite: [],
+        selectedSite: null,
     }
   },
     mounted() {
         initializeIMP();
-        const getList = localStorage.getItem('siteList');
-        this.siteList = JSON.parse(getList);
 
-        localStorage.removeItem('siteList');
+        axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${this.userStore.userData.userEmail}`,
+        { withCredentials: true })
+        .then(response => {
+            console.log(response);
+            this.siteList = response.data.SiteList || []; // 데이터 할당
+            console.log(this.siteList);
+
+            this.siteList.forEach(element => {
+                if(element.siteId == this.$route.query.siteId){
+                  this.selectedSite = element;
+                }
+                
+            });
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
     },
     computed:{
         userStore(){

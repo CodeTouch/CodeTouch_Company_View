@@ -22,6 +22,9 @@ export default {
     computed: {
         userStore() {
             return useUserStore();
+        },
+        viewPhoneNum(){
+            return this.formatPhoneNumber(this.userStore.userData.userPhone);
         }
     },
     components: {
@@ -33,9 +36,10 @@ export default {
         // Pinia 상태에서 사용자 정보 가져오기
         this.userName = this.userStore.userData.userName;
         this.userNickname = this.userStore.userData.userNickname;
-        this.userPhone = this.userStore.userData.userPhone;
         this.userEmail = this.userStore.userData.userEmail;
+        this.userPhone = this.userStore.userData.userPhone;
         this.profileImage = this.userStore.userData.userImgURL;
+        console.log(this.userStore.userData.userImgURL + "이미지 저장 확인");
 
         this.activeTab = this.$route.query.activeTab;
 
@@ -54,6 +58,20 @@ export default {
                 });
     },
     methods: {
+        formatPhoneNumber() {
+            // 숫자만 남기기
+            const phone = this.userPhone;
+            const onlyNumbers = phone.replace(/\D/g, '');
+            
+            // 정규식을 이용한 폼 변환
+            if (onlyNumbers.length <= 3) {
+                return onlyNumbers; // 010
+            } else if (onlyNumbers.length <= 7) {
+                return onlyNumbers.replace(/(\d{3})(\d{1,4})/, '$1-$2'); // 010-5555
+            } else {
+                return onlyNumbers.replace(/(\d{3})(\d{4})(\d{1,4})/, '$1-$2-$3'); // 010-5555-5555
+            }
+        },
         openModal() {
             this.viewPWModal = !this.viewPWModal;
         },
@@ -85,11 +103,22 @@ export default {
         },
         submitForm(e) {
             e.stopPropagation();
-            console.log(this.selectedFileName);
-
             const formData = new FormData();
+            if (this.selectedFile){
+                    // 파일 확장자 체크
+                    const fileExtension = this.selectedFileName.split('.').pop().toLowerCase(); // 확장자 추출
+                    const allowedExtensions = ['jpg', 'png'];
+                    if (!allowedExtensions.includes(fileExtension)) {
+                        alert('파일 형식은 JPG 또는 PNG만 가능합니다.');
+                        return; // 함수 종료
+                    }
+
+                formData.append('updateImageName', this.selectedFileName);
+            }else{
+                console.log(this.userStore.userData.userImgURL + "이미지 저장 확인");
+                formData.append('updateImageName', this.userStore.userData.userImgURL);
+            }
             formData.append('updateImage', this.selectedFile);
-            formData.append('updateImageName', this.selectedFileName);
             formData.append('name', this.userName);
             formData.append('nickname', this.userNickname);
             formData.append('phone', this.userPhone);
@@ -103,6 +132,19 @@ export default {
             })
             .then(response => {
                 console.log("성공");
+                console.log(response);
+
+                const userData = {
+                                email: this.userEmail || "", 
+                                name: this.userName || "",  
+                                nickname: this.userNickname || "",
+                                phone: this.userPhone || "",
+                                img: response.data || this.userStore.userData.userImgURL,
+                            };
+
+                this.userStore.setUserData(userData);
+
+                this.$router.push("/myPage");
             })
             .catch(error => {
                 console.log("실패");
@@ -161,13 +203,14 @@ export default {
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">이름</label>
-                        <input type="text" class="form-input input-none" v-model="userName" readonly>
-                    </div>
-
-                    <div class="form-group">
                         <label class="form-label">이메일</label>
                         <input type="email" class="form-input input-none" v-model="userEmail" readonly>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="form-label">이름</label>
+                        <input type="text" class="form-input input-none" v-model="userName" readonly>
                     </div>
 
                     <div class="form-group">
@@ -185,7 +228,7 @@ export default {
 
                     <div class="form-group">
                         <label class="form-label">휴대폰번호</label>
-                        <input type="tel" class="form-input input-none" v-model="userPhone">
+                        <input type="tel" class="form-input input-none" v-model="viewPhoneNum">
                     </div>
 
                     <button type="button" class="reAuth-button" @click="reAuth">재 인증</button>
@@ -315,7 +358,7 @@ export default {
         }
 
         .input-none{
-            background: #c2c2c28f;
+            background: #F9ECFA ;
             pointer-events: none;
         }
 
@@ -391,7 +434,7 @@ export default {
         }
 
         .submit-button.primary {
-            background-color: #18171c;
+            background-color: #7C2D9F;
             color: white;
         }
 

@@ -5,7 +5,6 @@ export default{
   data() {
         return {
           showDropdown: false,
-          userEmail: localStorage.getItem('UserEmail'),
         };
     },
     computed:{
