@@ -55,7 +55,7 @@ export default{
         <!-- 정보수정 섹션 -->
         <div class="section-info">
             <div class="section-header">
-                <h2>정보수정</h2>
+                <h2>내 정보</h2>
                 <router-link :to="{path: '/editPage', query: { activeTab: 'info' }}">
                     <button class="nav-button">수정하기</button>
                 </router-link>
@@ -184,6 +184,7 @@ export default{
 .profile-info-inline {
     display: flex;
     flex-direction: column;
+    padding-left: 30px;
 }
 
 .nickname {

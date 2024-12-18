@@ -1,9 +1,15 @@
 <script>
 import axios from 'axios';
+import { useUserStore } from '@/Store/userLoginStore';
 
 export default {
     props:{
         templateId: Number,
+    },
+    computed:{
+        userStore(){
+            return useUserStore();
+        }
     },
     methods: {
         clearSiteName() {
@@ -17,19 +23,22 @@ export default {
         },
         createSite(){
             const param = {
-                email: localStorage.getItem('email'),
+                email: this.userStore.userData.userEmail,
                 siteName: this.$refs.inputSiteName.value,
+                url: this.$refs.inputSiteDomain.value,
             }
 
             axios.post(`http://192.168.5.10:8888/고객/회원/사이트생성`, param,
                 { withCredentials: true })
                 .then(response => {
-                    if (response == 200){
+                    console.log(response);
+                    if (response.status == 200){
                         console.log("성공!!");
                         this.$router.push("/mySite");
                     }
                 })
                 .catch(error => {
+                    console.log(error);
                     console.log("실패!!");
                 });
         }
@@ -156,7 +165,10 @@ export default {
         }
 
         .domain-suffix {
-            padding: 12px;
+            display: flex; /* Flexbox 활성화 */
+            justify-content: flex-start; /* 내부 요소를 왼쪽 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+            padding: 12px 30px;
             color: rgba(255, 255, 255, 0.5);
             font-size: 14px;
             border-left: 1px solid rgba(255, 255, 255, 0.2);

@@ -11,7 +11,9 @@
         <div class="content-cell">
             <div class="status-buttons">
                 <div class="status-label">무료버전</div>
-                <button class="status-button active">연장/업그레이드</button>
+                <router-link :to="{path: '/pay', query: { siteId: site.siteId }}">
+                  <button class="status-button active">연장/업그레이드</button>
+                </router-link>
             </div>
         </div>
         <div class="content-cell">
@@ -60,7 +62,7 @@ export default {
         },
         deleteSite(){
           //const userEmail = this.userStore.userEmail;
-          const userEmail = localStorage.getItem('email');
+          const userEmail = this.userStore.userData.userEmail;
           console.log(userEmail);
           console.log(this.site.siteId);
 
@@ -69,6 +71,7 @@ export default {
                 )
                 .then(response => {
                   console.log("성공");
+                  window.location.reload();
                 })
                 .catch(error => {
                 });

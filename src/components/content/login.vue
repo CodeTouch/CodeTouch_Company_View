@@ -94,8 +94,7 @@ export default {
                             //localStorage.setItem('image', response.data.imgUrl);
                             //userStore.setUserData(this.email, );
                             const randomValue = Math.floor(Math.random() * 20) + 1;
-                            const imageName = `${randomValue}.png`;
-                            localStorage.setItem('image', imageName);
+
                             this.$router.push('/'); //메인 페이지로 이동
                         }
                     }
