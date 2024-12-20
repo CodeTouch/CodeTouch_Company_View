@@ -1,6 +1,7 @@
 <template lang="">
   <div>
     <h1>당신이 원하는대로 꾸며보세요!</h1>
+    <h1>{{count}}</h1>
     <div class="container">
       <div class="left-container"></div>
       <div class="right-container" ref="dragAreaRef">
@@ -38,6 +39,7 @@ const currentValue = ref({ X: 0, Y: 0 });
 const offset = ref({ X: 0, Y: 0 });
 const lastValue = ref({ X: 0, Y: 0 });
 const velocity = ref({ X: 0, Y: 0 });
+const count = ref(0);
 let offsetX = 0,
   offsetY = 0;
 let animationFrame;
@@ -164,7 +166,7 @@ const stopInteraction = () => {
 };
 
 const applyInertia = (div, vx, vy) => {
-  const friction = 0.95; // 마찰 계수
+  const friction = 0.98; // 마찰 계수
   const divWidth = div.offsetWidth;
   const divHeight = div.offsetHeight;
   const parentRect = dragAreaRef.value.getBoundingClientRect();
@@ -179,17 +181,21 @@ const applyInertia = (div, vx, vy) => {
     if (currentValue.value.X < 0) {
       currentValue.value.X = 0;
       vx = -vx * 0.5;
+      count.value += 1;
     } else if (currentValue.value.X + divWidth > parentRect.width) {
       currentValue.value.X = parentRect.width - divWidth;
       vx = -vx * 0.5;
+      count.value += 1;
     }
 
     if (currentValue.value.Y < 0) {
       currentValue.value.Y = 0;
       vy = -vy * 0.5;
+      count.value += 1;
     } else if (currentValue.value.Y + divHeight > parentRect.height) {
       currentValue.value.Y = parentRect.height - divHeight;
       vy = -vy * 0.5;
+      count.value += 1;
     }
 
     div.style.left = `${currentValue.value.X}px`;

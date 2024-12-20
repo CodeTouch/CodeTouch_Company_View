@@ -64,6 +64,7 @@ export default {
         phone: this.userPhone,
         birth: this.userBirth,
         gender: this.userGender,
+        agree: 1,
       };
 
       console.log(requestData);

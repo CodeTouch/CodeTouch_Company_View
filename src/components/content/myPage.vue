@@ -19,8 +19,8 @@ export default{
                 })
                 .then(response => {
                     console.log("성공");
-                    console.log(response);
                     this.receiptList = response.data;
+                    console.log(this.receiptList);
                 })
                 .catch(error => {
                     console.log(error);

@@ -4,13 +4,15 @@
             <div class="site-info">
                 <div class="site-header">
                     <span class="site-name">{{ site.siteName }}</span>
-                    <span class="badge">{{ site.status }}</span>
+                    <span class="badge" v-if="site.payState == 0">FREE</span>
+                    <span class="badge" v-if="site.payState == 1">PRO</span>
                 </div>
             </div>
         </div>
         <div class="content-cell">
             <div class="status-buttons">
-                <div class="status-label">무료버전</div>
+                <div class="status-label" v-if="site.payState == 0">무료버전</div>
+                <div class="status-label" v-if="site.payState == 1">프로버전</div>
                 <router-link :to="{path: '/pay', query: { siteId: site.siteId }}">
                   <button class="status-button active">연장/업그레이드</button>
                 </router-link>
@@ -169,7 +171,7 @@ export default {
   font-size: 12px;
   padding: 2px 6px;
   border-radius: 4px;
-  background-color: #f5f5f5;
+  background-color: #f79696;
   color: #666;
 }
 .status-button {

@@ -1,6 +1,7 @@
 <script>
 import editPW from './modal/editPW.vue';
 import axios from 'axios';
+import payDetail from './child/payDetail.vue';
 import { useUserStore } from '@/Store/userLoginStore';
 import { initializeIMP, certification } from "@/JavaScript/payment.js"; 
 
@@ -29,6 +30,7 @@ export default {
     },
     components: {
         editPW,
+        payDetail,
     },
     mounted() {
         initializeIMP();
@@ -247,7 +249,10 @@ export default {
                 <h2 class="section-title">이용중인 정기결제</h2>
                 <div class="payment-card">
                     <p class="empty-text" v-if="!receiptList">정기결제 내역이 없습니다.</p>
-                    
+
+                    <div v-for="(receipt, index) in receiptList" :key="index">
+                        <payDetail :receipt="receipt" />
+                    </div>
                 </div>
             </div>
         </div>
