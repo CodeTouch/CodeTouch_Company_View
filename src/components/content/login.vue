@@ -65,7 +65,7 @@ export default {
                     "password": this.password,
                 }
 
-                axios.post(`http://192.168.5.10:8888/고객/회원/로그인`, param,
+                axios.post(`http://192.168.5.58:8888/고객/회원/로그인`, param,
                 { withCredentials: true })
                 .then(response => {
                     if(response.status == 200){

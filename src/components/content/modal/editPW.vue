@@ -1,6 +1,7 @@
 <script>
 import axios from 'axios';
 import debounce from "lodash/debounce";
+import { useUserStore } from '@/Store/userLoginStore';
 
 export default{
     data(){
@@ -14,17 +15,22 @@ export default{
             inputPass: false,
         }
     },
+    computed:{
+        userStore(){
+            return useUserStore();
+        }
+    },
     methods: {
         closeBtn(){
             this.$emit('close-modal');
         },
         validatePassword: debounce(function () {
             const requestData = {
-                "email": localStorage.getItem('email'),
+                "email": this.userStore.userData.userEmail,
                 "password": this.password,
             }
 
-            axios.post(`http://192.168.5.10:8888/회사/회원/비밀번호확인`, 
+            axios.post(`http://192.168.5.58:8888/회사/회원/비밀번호확인`, 
             requestData,
             { withCredentials: true }
             )
@@ -61,25 +67,25 @@ export default{
         this.validatePassword();
         this.confirmPassword();
 
-        if (this.passwordError || this.checkPasswordError || this.inputPass) {
+        if (this.passwordError || this.checkPasswordError) {
             alert('폼을 올바르게 작성해주세요.');
             return;
         }
 
         const requestData = {
-            "email": localStorage.getItem('email'),
+            "email": this.userStore.userData.userEmail,
             "password": this.newPassword
         };
 
         console.log(requestData);
 
-        axios.post(`http://192.168.5.10:8888/회사/회원/비번재설정`, 
+        axios.post(`http://192.168.5.58:8888/회사/회원/비번재설정`, 
         requestData,
         { withCredentials: true }
         )
             .then(response => {
                 if(response.status == 200){
-                    this.$router.push('/login');
+                    this.$router.push('/myPage');
                 }
             })
             .catch(error => {

@@ -6,6 +6,7 @@
                     <span class="site-name">{{ site.siteName }}</span>
                     <span class="badge" v-if="site.payState == 0">FREE</span>
                     <span class="badge" v-if="site.payState == 1">PRO</span>
+                    <a :href="'http://192.168.5.58:9999/' + site.url" target="_blank">{{ site.url }}</a>
                 </div>
             </div>
         </div>
@@ -24,7 +25,9 @@
                 <button class="tool-button dark" @click="toggleDropdown">더보기</button>
                 <div v-if="showDropdown" class="dropdown-menu">
                     <div class="menu-item">사이트 관리</div>
-                    <div class="menu-item">디자인 모드</div>
+                    <a :href="'http://192.168.5.58:9999/고객/사이트편집/' + site.url" target="_blank">
+                      <div class="menu-item">디자인 모드</div>
+                    </a>
                     <div class="divider"></div>
                     <div class="menu-item">템플릿 변경</div>
                     <div class="divider"></div>
@@ -68,7 +71,7 @@ export default {
           console.log(userEmail);
           console.log(this.site.siteId);
 
-          axios.delete(`http://192.168.5.10:8888/고객/회원/사이트삭제/${userEmail}/${this.site.siteId}`,
+          axios.delete(`http://192.168.5.58:8888/고객/회원/사이트삭제/${userEmail}/${this.site.siteId}`,
                     { withCredentials: true }
                 )
                 .then(response => {
@@ -152,11 +155,13 @@ export default {
 .site-info {
   display: flex;
   flex-direction: column;
+  width: 150px;
   padding-right: 130px;
 }
 
 .site-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
   
 }

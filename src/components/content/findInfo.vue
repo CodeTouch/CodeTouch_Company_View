@@ -45,7 +45,7 @@ export default {
                 this.imp_uid= rep.imp_uid;
 
                 // 서버에서 해당 유저 id 찾아주기
-                axios.get(`http://192.168.5.10:8888/회사/회원/아이디찾기/${this.imp_uid}`,
+                axios.get(`http://192.168.5.58:8888/회사/회원/아이디찾기/${this.imp_uid}`,
                     { withCredentials: true }
                 )
                 .then(response => {
@@ -71,7 +71,7 @@ export default {
                 console.log(this.imp_uid);
 
                 // 서버에서 해당 유저 id 찾아주기
-                axios.get(`http://192.168.5.10:8888/회사/회원/비번찾기/${this.email}/${this.imp_uid}`,
+                axios.get(`http://192.168.5.58:8888/회사/회원/비번찾기/${this.email}/${this.imp_uid}`,
                     { withCredentials: true }
                 )
                 .then(response => {

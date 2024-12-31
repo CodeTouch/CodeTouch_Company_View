@@ -26,9 +26,10 @@ export default {
                 email: this.userStore.userData.userEmail,
                 siteName: this.$refs.inputSiteName.value,
                 url: this.$refs.inputSiteDomain.value,
+                templateId: this.templateId,
             }
 
-            axios.post(`http://192.168.5.10:8888/고객/회원/사이트생성`, param,
+            axios.post(`http://192.168.5.58:8888/고객/회원/사이트생성`, param,
                 { withCredentials: true })
                 .then(response => {
                     console.log(response);

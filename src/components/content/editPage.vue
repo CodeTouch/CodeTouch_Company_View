@@ -45,7 +45,7 @@ export default {
 
         this.activeTab = this.$route.query.activeTab;
 
-        axios.get(`http://192.168.5.10:8888/회사/회원/결제내역조회/${this.userStore.userData.userEmail}/${false}`,
+        axios.get(`http://192.168.5.58:8888/회사/회원/결제내역조회/${this.userStore.userData.userEmail}/${false}`,
                 { withCredentials: true,
                 //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
                 })
@@ -87,7 +87,7 @@ export default {
                     onSuccess: (response) => {
                         this.imp_uid = response.imp_uid;
 
-                        axios.get(`http://192.168.5.10:8888/회사/패스/인증/${this.imp_uid}`, { withCredentials: true })
+                        axios.get(`http://192.168.5.58:8888/회사/패스/인증/${this.imp_uid}`, { withCredentials: true })
                         .then(response => {
                             const user = response.data.data;
                             this.userName = user.name;
@@ -126,7 +126,7 @@ export default {
             formData.append('phone', this.userPhone);
             formData.append('email', this.userEmail);
 
-            axios.post(`http://192.168.5.10:8888/회사/회원/개인정보수정`, formData, {   
+            axios.post(`http://192.168.5.58:8888/회사/회원/개인정보수정`, formData, {   
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'multipart/form-data',

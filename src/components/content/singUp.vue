@@ -70,7 +70,7 @@ export default {
       console.log(requestData);
 
       axios
-        .post("http://192.168.5.10:8888/회사/회원/회원가입", requestData, { withCredentials: true })
+        .post("http://192.168.5.58:8888/회사/회원/회원가입", requestData, { withCredentials: true })
         .then((response) => {
           if (response.status === 200) {
             this.$router.push("/login");
@@ -122,7 +122,7 @@ export default {
           this.imp_uid = response.imp_uid;
 
           axios
-            .get(`http://192.168.5.10:8888/회사/패스/인증/${this.imp_uid}`, { withCredentials: true })
+            .get(`http://192.168.5.58:8888/회사/패스/인증/${this.imp_uid}`, { withCredentials: true })
             .then((response) => {
               const user = response.data.data;
               this.userName = user.name;
@@ -156,7 +156,7 @@ export default {
     duplicateCheck: debounce(function () {
         if (this.email.length > 0) {
           axios
-            .get(`http://192.168.5.10:8888/회사/회원/회원가입/중복확인/${this.email}`, { withCredentials: true })
+            .get(`http://192.168.5.58:8888/회사/회원/회원가입/중복확인/${this.email}`, { withCredentials: true })
             .then((response) => {
               console.log("중복 아님");
             })

@@ -28,7 +28,7 @@ export default {
 
     },
     mounted(){
-        axios.get(`http://192.168.5.10:8888/고객/회원/사이트정보/${this.userStore.userData.userEmail}`,
+        axios.get(`http://192.168.5.58:8888/고객/회원/사이트정보/${this.userStore.userData.userEmail}`,
             { withCredentials: true,
             //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
             })

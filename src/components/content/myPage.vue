@@ -13,7 +13,7 @@ export default{
         payDetail,
     },  
     mounted(){
-        axios.get(`http://192.168.5.10:8888/회사/회원/결제내역조회/${this.userStore.userData.userEmail}/${false}`,
+        axios.get(`http://192.168.5.58:8888/회사/회원/결제내역조회/${this.userStore.userData.userEmail}/${false}`,
                 { withCredentials: true,
                 //headers: {Authorization: `Bearer ${localStorage.getItem('AuthToken')}`,}, 
                 })

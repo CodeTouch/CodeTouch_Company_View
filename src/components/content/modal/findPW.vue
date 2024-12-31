@@ -57,7 +57,7 @@ export default{
 
         console.log(requestData);
 
-        axios.post(`http://192.168.5.10:8888/회사/회원/비번재설정`, 
+        axios.post(`http://192.168.5.58:8888/회사/회원/비번재설정`, 
         requestData,
         { withCredentials: true }
         )
